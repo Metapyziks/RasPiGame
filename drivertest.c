@@ -50,7 +50,7 @@ int main()
     printf("The framebuffer device was mapped to memory successfully.\n");
 
     // Figure out where in memory to put the pixel
-    for (y = 0; y < 240; y++) for (x = 0; x < 128; x++) {
+    for (y = 0; y < 240; y++) for (x = 0; x < 320; x++) {
         location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
         (y+vinfo.yoffset) * finfo.line_length;
 
@@ -69,7 +69,7 @@ int main()
     }
 
     sleep(5);
-    
+
     munmap(fbp, screensize);
     close(fbfd);
     return 0;
