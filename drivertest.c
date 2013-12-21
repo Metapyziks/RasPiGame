@@ -67,6 +67,9 @@ int main()
             *((unsigned short int*)(fbp + location)) = t;
         }
     }
+
+    sleep(5);
+    
     munmap(fbp, screensize);
     close(fbfd);
     return 0;
