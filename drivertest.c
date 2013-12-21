@@ -17,7 +17,7 @@ int main()
     long int location = 0;
 
     // Open the file for reading and writing
-    fbfd = open("/dev/fb0", O_RDWR);
+    fbfd = open("/dev/fb1", O_RDWR);
     if (fbfd == -1) {
         perror("Error: cannot open framebuffer device");
         exit(1);
@@ -50,7 +50,7 @@ int main()
     printf("The framebuffer device was mapped to memory successfully.\n");
 
     // Figure out where in memory to put the pixel
-    for (y = 0; y < 128; y++) for (x = 0; x < 128; x++) {
+    for (y = 0; y < 240; y++) for (x = 0; x < 128; x++) {
         location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
         (y+vinfo.yoffset) * finfo.line_length;
 
