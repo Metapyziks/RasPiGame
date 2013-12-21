@@ -49,26 +49,27 @@ int main()
     }
     printf("The framebuffer device was mapped to memory successfully.\n");
 
+    system("setterm -cursor off");
+
     // Figure out where in memory to put the pixel
     for (y = 0; y < 240; y++) for (x = 0; x < 320; x++) {
-        location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
-        (y+vinfo.yoffset) * finfo.line_length;
+        location = (x+vinfo.xoffset) * 2 + (y+vinfo.yoffset) * finfo.line_length;
 
-        if (vinfo.bits_per_pixel == 32) {
-            *(fbp + location) = 100;        // Some blue
-            *(fbp + location + 1) = 15+(x-100)/2;     // A little green
-            *(fbp + location + 2) = 200-(y-100)/5;    // A lot of red
-            *(fbp + location + 3) = 0;      // No transparency
-        } else  { //assume 16bpp
-            int b = 10;
-            int g = x/8;     // A little green
-            int r = y/16;    // A lot of red
-            unsigned short int t = r<<11 | g << 5 | b;
-            *((unsigned short int*)(fbp + location)) = t;
-        }
+        int b = 10;
+        int g = x/8;     // A little green
+        int r = y/16;    // A lot of red
+        unsigned short int t = r<<11 | g << 5 | b;
+        *((unsigned short int*)(fbp + location)) = t;
     }
 
     sleep(5);
+
+    for (y = 0; y < 240; y++) for (x = 0; x < 320; x++) {
+        location = (x+vinfo.xoffset) * 2 + (y+vinfo.yoffset) * finfo.line_length;
+        *((unsigned short int*)(fbp + location)) = 0;
+    }
+
+    system("setterm -cursor on");
 
     munmap(fbp, screensize);
     close(fbfd);
