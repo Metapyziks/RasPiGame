@@ -36,14 +36,16 @@ int main()
         exit(3);
     }
 
+    vinfo.xres = 240;
+    vinfo.yres = 320;
+
     printf("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
 
     // Figure out the size of the screen in bytes
     screensize = vinfo.xres * vinfo.yres * vinfo.bits_per_pixel / 8;
 
     // Map the device to memory
-    fbp = (char *)mmap(0, screensize, PROT_READ | PROT_WRITE, MAP_SHARED,
-    fbfd, 0);
+    fbp = (char *)mmap(0, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, fbfd, 0);
     if ((int)fbp == -1) {
         perror("Error: failed to map framebuffer device to memory");
         exit(4);
@@ -51,7 +53,7 @@ int main()
     printf("The framebuffer device was mapped to memory successfully.\n");
 
     // Figure out where in memory to put the pixel
-    for (y = 0; y < 480; y++) for (x = 0; x < 320; x++) {
+    for (y = 0; y < vinfo.yres; y++) for (x = 0; x < vinfo.xres; x++) {
         location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
         (y+vinfo.yoffset) * finfo.line_length;
 
