@@ -36,9 +36,6 @@ int main()
         exit(3);
     }
 
-    vinfo.xres = 240;
-    vinfo.yres = 320;
-
     printf("%dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
 
     // Figure out the size of the screen in bytes
@@ -53,7 +50,7 @@ int main()
     printf("The framebuffer device was mapped to memory successfully.\n");
 
     // Figure out where in memory to put the pixel
-    for (y = 0; y < vinfo.yres; y++) for (x = 0; x < vinfo.xres; x++) {
+    for (y = 0; y < 128; y++) for (x = 0; x < 128; x++) {
         location = (x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) +
         (y+vinfo.yoffset) * finfo.line_length;
 
