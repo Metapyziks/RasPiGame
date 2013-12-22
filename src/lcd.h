@@ -9,6 +9,8 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
+#include "utils.h"
+
 #define DISPLAY_WIDTH 320
 #define DISPLAY_HEIGHT 240
 
