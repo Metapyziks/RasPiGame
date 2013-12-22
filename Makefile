@@ -16,5 +16,5 @@ CFLAGS = -O3 -Wall -Wcast-align -Wcast-qual -Wimplicit \
 	   -Wstrict-prototypes
 
 $(BINDIR)/$(TARGET): $(SRC) $(HDR) Makefile
-	mkdir $(BINDIR)
+	mkdir -p $(BINDIR)
 	gcc $(SRC) $(CFLAGS) -o $(BINDIR)/$(TARGET)
