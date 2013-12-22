@@ -14,6 +14,10 @@ int main(void)
         }
     }
 
+    sleep(5);
+
+    lcd_clear(BLACK);
+
     lcd_stop();
 
     return 0;
