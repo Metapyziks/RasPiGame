@@ -21,7 +21,7 @@ else
 fi
 
 echo "Starting Driver Test"
-bin/drivertest
+bin/main
 
 echo "Leaving $DIR"
 cd $OLDDIR
