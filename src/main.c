@@ -16,7 +16,7 @@ int main(void)
 
     sleep(5);
 
-    lcd_clear(BLACK);
+    lcd_clear(CLR_BLACK);
 
     lcd_stop();
 
