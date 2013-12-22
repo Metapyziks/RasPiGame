@@ -16,6 +16,8 @@ then
 
     echo "Making"
     make
+else
+    echo "No update required"
 fi
 
 echo "Starting Driver Test"
