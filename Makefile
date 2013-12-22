@@ -11,7 +11,7 @@ SRC = \
 
 TARGET = main
 
-CFLAGS = -O3 -Wall -Wcast-align -Wcast-qual -Wimplicit \
+CFLAGS = -std=c99 -O3 -Wall -Wcast-align -Wcast-qual -Wimplicit \
 	   -Wmissing-declarations -Wmissing-prototypes -Wnested-externs \
 	   -Wpointer-arith -Wredundant-decls -Wshadow \
 	   -Wstrict-prototypes

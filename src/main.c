@@ -2,8 +2,6 @@
 
 int main(void)
 {
-    int x, y;
-
     lcd_init();
 
     for (int i = 0; i < 10; ++i) {
