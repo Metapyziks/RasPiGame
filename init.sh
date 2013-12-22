@@ -9,7 +9,7 @@ cd $DIR
 echo "Checking for update"
 git remote update
 
-if [ "$(git status -suno)" ]
+if [ "$(git status -uno | grep behind)" ]
 then
     echo "Update found, pulling changes"
     git pull origin master
