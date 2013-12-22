@@ -2,6 +2,7 @@ SRCDIR = src
 BINDIR = bin
 
 HDR = \
+	$(SRCDIR)/utils.h \
 	$(SRCDIR)/lcd.h
 
 SRC = \

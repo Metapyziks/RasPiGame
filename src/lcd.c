@@ -33,7 +33,7 @@ int lcd_init(void)
 
     printf("%dx%d, %dbpp\n", lcd_vinfo.xres, lcd_vinfo.yres, lcd_vinfo.bits_per_pixel);
 
-    lcd_screensize = vinfo.xres * vinfo.yres * (vinfo.bits_per_pixel >> 3);
+    lcd_screensize = lcd_vinfo.xres * lcd_vinfo.yres * (lcd_vinfo.bits_per_pixel >> 3);
 
     lcd_fbp = (unsigned short int*) mmap(0, lcd_screensize,
         PROT_READ | PROT_WRITE, MAP_SHARED, lcd_fbfd, 0);

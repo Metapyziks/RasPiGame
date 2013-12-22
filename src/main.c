@@ -1,6 +1,6 @@
 #include "lcd.h"
 
-int main()
+int main(void)
 {
     int x, y;
 

@@ -23,7 +23,7 @@ typedef unsigned short int color_t;
 int  lcd_init(void);
 void lcd_stop(void);
 
-void lcd_setPixel(unsigned short int x, unsigned short int y, color_t clr);
+void lcd_setPixel(int x, int y, color_t clr);
 
 void lcd_clear(color_t clr);
 
