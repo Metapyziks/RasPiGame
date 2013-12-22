@@ -67,6 +67,8 @@ void lcd_setPixel(int x, int y, color_t clr)
 
 void lcd_clear(color_t clr)
 {
+    int x, y;
+
     if (clr == CLR_NONE) return;
 
     for (y = 0; y < DISPLAY_HEIGHT; ++y) for (x = 0; x < DISPLAY_WIDTH; ++x) {
