@@ -71,7 +71,7 @@ void lcd_clear(color_t clr)
     }
 }
  
-unsigned char lcd_getButtons()
+unsigned char lcd_getButtons(void)
 {
     unsigned char buttons;
  
