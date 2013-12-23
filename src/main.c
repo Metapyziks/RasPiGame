@@ -6,7 +6,7 @@ int main(void)
 
     unsigned char old = lcd_getButtons();
 
-    for (int i = 0; i < 10; ++i) {
+    for (;;) {
         unsigned char new;
 
         while ((new = lcd_getButtons()) == old);
