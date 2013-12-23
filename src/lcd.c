@@ -31,8 +31,7 @@ int lcd_init(void)
         return FALSE;
     }
 
-    printf("%dx%d, (%d), %dbpp\n", lcd_vinfo.xres, lcd_vinfo.yres,
-        lcd_finfo.line_length, lcd_vinfo.bits_per_pixel);
+    printf("%dx%d, %dbpp\n", lcd_vinfo.xres, lcd_vinfo.yres, lcd_vinfo.bits_per_pixel);
 
     lcd_screensize = lcd_vinfo.xres * lcd_vinfo.yres * (lcd_vinfo.bits_per_pixel >> 3);
 
