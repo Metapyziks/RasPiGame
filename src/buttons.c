@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 
-#define SSD1289_GET_KEYS _IOR('keys', 1, unsigned char *)
+#define SSD1289_GET_KEYS _IOR('K', 1, unsigned char *)
  
 void get_keys(int fd)
 {
