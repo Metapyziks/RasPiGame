@@ -4,7 +4,7 @@ int main(void)
 {
     lcd_init();
 
-    unsigned char old = lcd_getButtons();
+    /*unsigned char old = lcd_getButtons();
 
     for (int i = 0; i < 10; ++i) {
         unsigned char new;
@@ -14,7 +14,7 @@ int main(void)
         printf("Buttons : %2x\n", new);
 
         old = new;
-    }
+    }*/
 
     int delay = 200000;
 
