@@ -1,6 +1,6 @@
 #include "lcd.h"
 
-#define setPixel(x, y, clr) (lcd_fbp[x + y * (lcd_finfo.line_length >> 1)] = clr)
+#define setPixel(x, y, clr) (lcd_fbp[x + y * DISPLAY_WIDTH] = clr)
 
 static struct fb_fix_screeninfo lcd_finfo;
 static struct fb_var_screeninfo lcd_vinfo;
