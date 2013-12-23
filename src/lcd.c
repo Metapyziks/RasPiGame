@@ -1,6 +1,6 @@
 #include "lcd.h"
 
-#define setPixel(x, y, clr) (lcd_fbp[(x + lcd_vinfo.xoffset) + (y + lcd_vinfo.yoffset) * (lcd_finfo.line_length >> 1)] = clr)
+#define setPixel(x, y, clr) (lcd_fbp[x + y * (lcd_finfo.line_length >> 1)] = clr)
 
 static struct fb_fix_screeninfo lcd_finfo;
 static struct fb_var_screeninfo lcd_vinfo;
@@ -31,8 +31,8 @@ int lcd_init(void)
         return FALSE;
     }
 
-    printf("%dx%d, (%d,%d), %dbpp\n", lcd_vinfo.xres, lcd_vinfo.yres,
-        lcd_vinfo.xoffset, lcd_vinfo.yoffset, lcd_vinfo.bits_per_pixel);
+    printf("%dx%d, (%d), %dbpp\n", lcd_vinfo.xres, lcd_vinfo.yres,
+        lcd_finfo.line_length, lcd_vinfo.bits_per_pixel);
 
     lcd_screensize = lcd_vinfo.xres * lcd_vinfo.yres * (lcd_vinfo.bits_per_pixel >> 3);
 
