@@ -1,13 +1,15 @@
 #ifndef _LCD_H_
 #define _LCD_H_ 1
 
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <linux/fb.h>
-#include <sys/mman.h>
+#include <sys/types.h>
 #include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <linux/fb.h>
 
 #include "utils.h"
 
