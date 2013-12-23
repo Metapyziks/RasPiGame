@@ -4,7 +4,7 @@ int main(void)
 {
     lcd_init();
 
-    for (int i = 0; i < 0x100; ++i) {
+    for (volatile int i = 0; i < 0x100; ++i) {
         lcd_clear(clr_fromRGB(i, i, i));
     }
     
