@@ -4,6 +4,18 @@ int main(void)
 {
     lcd_init();
 
+    unsigned char old = lcd_getButtons();
+
+    for (int i = 0; i < 10; ++i) {
+        unsigned char new;
+
+        while ((new = lcd_getButtons()) == old);
+
+        printf("Buttons : %2x\n", new);
+
+        old = new;
+    }
+
     int delay = 200000;
 
     for (int i = 0; i < 0x100; ++i) {

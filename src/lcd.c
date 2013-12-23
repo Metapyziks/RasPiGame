@@ -1,6 +1,7 @@
 #include "lcd.h"
 
-#define setPixel(x, y, clr) (lcd_fbp[(x) + (y) * DISPLAY_WIDTH] = clr)
+#define SET_PIXEL(x, y, clr) (lcd_fbp[(x) + (y) * DISPLAY_WIDTH] = clr)
+#define SSD1289_GET_KEYS _IOR('keys', 1, unsigned char *)
 
 static struct fb_fix_screeninfo lcd_finfo;
 static struct fb_var_screeninfo lcd_vinfo;
@@ -60,12 +61,23 @@ void lcd_stop(void)
 
 void lcd_setPixel(int x, int y, color_t clr)
 {
-    setPixel(x, y, clr);
+    SET_PIXEL(x, y, clr);
 }
 
 void lcd_clear(color_t clr)
 {
     for (int y = 0; y < DISPLAY_HEIGHT; ++y) for (int x = 0; x < DISPLAY_WIDTH; ++x) {
-        setPixel(x, y, clr);
+        SET_PIXEL(x, y, clr);
     }
+}
+ 
+unsigned char lcd_getButtons()
+{
+    unsigned char buttons;
+ 
+    if (ioctl(lcd_fbfd, SSD1289_GET_KEYS, &buttons) == -1) {
+        perror("_apps ioctl get");
+    }
+
+    return buttons;
 }

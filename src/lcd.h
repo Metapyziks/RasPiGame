@@ -28,4 +28,6 @@ void lcd_setPixel(int x, int y, color_t clr);
 
 void lcd_clear(color_t clr);
 
+unsigned char lcd_getButtons();
+
 #endif
