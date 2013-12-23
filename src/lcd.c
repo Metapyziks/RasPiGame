@@ -20,8 +20,6 @@ int lcd_init(void)
         return FALSE;
     }
 
-    printf("Ioctl Number: (int)%d  (hex)%x\n", SSD1289_GET_KEYS, SSD1289_GET_KEYS);
-
     printf("The framebuffer device was opened successfully.\n");
 
     if (ioctl(lcd_fbfd, FBIOGET_FSCREENINFO, &lcd_finfo) == -1) {
@@ -72,7 +70,7 @@ void lcd_clear(color_t clr)
         SET_PIXEL(x, y, clr);
     }
 }
- 
+
 unsigned char lcd_getButtons(void)
 {
     unsigned char buttons;
