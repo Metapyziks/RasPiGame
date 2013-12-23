@@ -1,7 +1,7 @@
 #include "lcd.h"
 
 #define SET_PIXEL(x, y, clr) (lcd_fbp[(x) + (y) * DISPLAY_WIDTH] = clr)
-#define SSD1289_GET_KEYS _IOR('keys', 1, unsigned char *)
+#define SSD1289_GET_KEYS _IOR('k', 1, unsigned char *)
 
 static struct fb_fix_screeninfo lcd_finfo;
 static struct fb_var_screeninfo lcd_vinfo;
@@ -19,7 +19,7 @@ int lcd_init(void)
         perror("Error: cannot open framebuffer device");
         return FALSE;
     }
-    
+
     printf("Ioctl Number: (int)%d  (hex)%x\n", SSD1289_GET_KEYS, SSD1289_GET_KEYS);
 
     printf("The framebuffer device was opened successfully.\n");
