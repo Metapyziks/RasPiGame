@@ -4,12 +4,12 @@ int main(void)
 {
     lcd_init();
 
-    for (int i = 0; i < 10; ++i) {
-        lcd_clear(CLR_WHITE);
-        sleep(1);
-        lcd_clear(CLR_BLACK);
-        sleep(1);
+    for (int i = 0; i < 0x100; ++i) {
+        lcd_clear(clr_fromRGB(i, i, i));
     }
+    
+    sleep(5);
+    lcd_clear(CLR_BLACK);
 
     lcd_stop();
 

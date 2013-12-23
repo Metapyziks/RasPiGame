@@ -61,16 +61,12 @@ void lcd_stop(void)
 
 void lcd_setPixel(int x, int y, color_t clr)
 {
-    if (clr == CLR_NONE) return;
-
     setPixel(x, y, clr);
 }
 
 void lcd_clear(color_t clr)
 {
     int x, y;
-
-    if (clr == CLR_NONE) return;
 
     for (y = 0; y < DISPLAY_HEIGHT; ++y) for (x = 0; x < DISPLAY_WIDTH; ++x) {
         setPixel(x, y, clr);

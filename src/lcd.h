@@ -14,11 +14,10 @@
 #define DISPLAY_WIDTH 320
 #define DISPLAY_HEIGHT 240
 
-#define clr_fromRGB(r, g, b) ((color_t) (((r & 0xF8) << 8) | ((g & 0xF8) << 3) | ((b & 0xF8) >> 3)))
+#define clr_fromRGB(r, g, b) ((color_t) (((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ((b & 0xF8) >> 3)))
 
 #define CLR_WHITE clr_fromRGB(0xff, 0xff, 0xff)
 #define CLR_BLACK clr_fromRGB(0x00, 0x00, 0x00)
-#define CLR_NONE 0x0020
 
 typedef unsigned short int color_t;
 
