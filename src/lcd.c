@@ -90,7 +90,7 @@ void lcd_blitSpritePalette(unsigned char* sprite, color_t* palette,
     int dstX, int dstY, int dstW, int dstH)
 {
     lcd_blitSpritePaletteScaled(sprite, palette, srcX, srcY,
-        srcW, srcH, dstX, dstY, dstW, dstH, 1, 1)
+        srcW, srcH, dstX, dstY, dstW, dstH, 1, 1);
 }
 
 void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
