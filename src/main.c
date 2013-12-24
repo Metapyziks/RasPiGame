@@ -10,7 +10,8 @@ int main(void)
     unsigned char old = lcd_getButtons();
 
     lcd_clear(CLR_BLACK);
-    lcd_blitSpritePalette(charizardSprite, charizardPalette, 0, 0, 56, 56, 20, 20, 280, 56);
+    lcd_blitSpritePaletteScaled(charizardSprite, charizardPalette,
+        0, 0, 56, 56, 8, 8, 112, 112, 2, 2);
 
     while (lcd_getButtons() == old) {
         usleep(10);

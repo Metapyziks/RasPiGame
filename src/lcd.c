@@ -89,12 +89,21 @@ void lcd_blitSpritePalette(unsigned char* sprite, color_t* palette,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
+    lcd_blitSpritePaletteScaled(sprite, palette, srcX, srcY,
+        srcW, srcH, dstX, dstY, dstW, dstH, 1, 1)
+}
+
+void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
+    int srcX, int srcY, int srcW, int srcH,
+    int dstX, int dstY, int dstW, int dstH,
+    int scaleX, int scaleY)
+{
     int x, y;
     unsigned char index;
 
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = (srcX + i) % srcW;
-        y = (srcY + j) % srcH;
+        x = (srcX + i / scaleX) % srcW;
+        y = (srcY + j / scaleY) % srcH;
         
         index = sprite[x + y * srcW];
 
