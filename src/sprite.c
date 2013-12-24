@@ -1,18 +1,25 @@
 #include "sprite.h"
 
+#define SPRITE_ERROR_MSG(msg) ("Error loading sprite '%s':"msg"\n", path)
+
 uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
 {
-    FILE* fp;
-    uint32_t ident;
+    FILE* fp = NULL;
+    uint32_t ident = 0;
 
     printf("Attempting to load %s\n", path);
 
     fp = fopen(path, "r");
 
+    if (!fp) {
+        fprintf(stderr, SPRITE_ERROR_MSG("Couldn't open file"));
+        exit(1);
+    }
+
     fread(&ident, 4, 1, fp);
 
     if (ident != 0x50494354) {
-        fprintf(stderr, "Error loading sprite '%s': Bad file format\n", path);
+        fprintf(stderr, SPRITE_ERROR_MSG("Bad file format"));
         exit(1);
     }
 
@@ -26,14 +33,14 @@ uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
     uint8_t* sprite = (uint8_t*) malloc(size);
 
     if (sprite == NULL) {
-        fprintf(stderr, "Memory error\n");
+        fprintf(stderr, SPRITE_ERROR_MSG("Memory error"));
         exit(1);
     }
 
     int read = fread(sprite, 1, size, fp);
 
     if (read != size) {
-        fprintf(stderr, "Error loading sprite '%s': Unexpected end of file\n", path);
+        fprintf(stderr, SPRITE_ERROR_MSG("Unexpected end of file"));
         exit(1);
     }
 

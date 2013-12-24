@@ -33,8 +33,6 @@ int main(void)
     uint16_t tilesetH = 0;
     uint8_t* tileset = NULL;
 
-    printf("Why this not work??\n");
-
     tileset = sprite_fromFile("../res/tileset.pic", &tilesetW, &tilesetH);
 
     lcd_clear(CLR_BLACK);
