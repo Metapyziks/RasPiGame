@@ -71,6 +71,39 @@ void lcd_clear(color_t clr)
     }
 }
 
+void lcd_blitSprite(color_t* sprite,
+    int srcX, int srcY, int srcW, int srcH,
+    int dstX, int dstY, int dstW, int dstH)
+{
+    int x, y;
+
+    for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
+        x = (srcX + i) % srcW;
+        y = (srcY + j) % srcH;
+
+        SET_PIXEL(dstX + i, dstY + j, sprite[x + y * srcW]);
+    }
+}
+
+void lcd_blitSpritePalette(unsigned char* sprite, color_t* palette,
+    int srcX, int srcY, int srcW, int srcH,
+    int dstX, int dstY, int dstW, int dstH)
+{
+    int x, y;
+    unsigned char index;
+
+    for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
+        x = (srcX + i) % srcW;
+        y = (srcY + j) % srcH;
+        
+        index = sprite[x + y * srcW];
+
+        if (index != 0xff) {
+            SET_PIXEL(dstX + i, dstY + j, palette[index]);
+        }
+    }
+}
+
 unsigned char lcd_getButtons(void)
 {
     unsigned char buttons;

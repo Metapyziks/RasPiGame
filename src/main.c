@@ -1,4 +1,7 @@
+#include <unistd.h>
+
 #include "lcd.h"
+#include "sprites/charizard.c"
 
 int main(void)
 {
@@ -6,33 +9,10 @@ int main(void)
 
     unsigned char old = lcd_getButtons();
 
-    int delay = 200000;
+    lcd_blitSpritePalette(charizardSprite, charizardPalette, 0, 0, 56, 56, 8, 8, 56, 56);
 
-    for (int i = 0; i < 0x100; ++i) {
-        lcd_clear(clr_fromRGB(0x00, i, 0x00));
-        for (volatile int j = 0; j < delay; ++j);
-    }
-
-    do {
-        for (int i = 0; i < 0x100; ++i) {
-            lcd_clear(clr_fromRGB(0x00, 0xff - i, i));
-            for (volatile int j = 0; j < delay; ++j);
-        }
-
-        for (int i = 0; i < 0x100; ++i) {
-            lcd_clear(clr_fromRGB(i, 0x00, 0xff - i));
-            for (volatile int j = 0; j < delay; ++j);
-        }
-
-        for (int i = 0; i < 0x100; ++i) {
-            lcd_clear(clr_fromRGB(0xff - i, i, 0x00));
-            for (volatile int j = 0; j < delay; ++j);
-        }
-    } while (lcd_getButtons() == old);
-
-    for (int i = 0; i < 0x100; ++i) {
-        lcd_clear(clr_fromRGB(0x00, 0xff - i, 0x00));
-        for (volatile int j = 0; j < delay; ++j);
+    while (lcd_getButtons() == old) {
+        usleep(10);
     }
 
     lcd_stop();
