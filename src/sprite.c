@@ -19,16 +19,18 @@ uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
 
     printf("Loading %s (%ix%i)", path, *width, *height);
 
-    uint8_t* sprite = (uint8_t*) malloc(width * height);
+    int size = *width * *height;
+
+    uint8_t* sprite = (uint8_t*) malloc(size);
 
     if (sprite == NULL) {
         fprintf(stderr, "Memory error");
         exit(1);
     }
 
-    int read = fread(sprite, 1, width * height, fp);
+    int read = fread(sprite, 1, size, fp);
 
-    if (read != width * height) {
+    if (read != size) {
         fprintf(stderr, "Error loading sprite '%s': Unexpected end of file", path);
         exit(1);
     }
