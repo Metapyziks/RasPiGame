@@ -25,7 +25,7 @@ else
     echo "No update required"
 fi
 
-if [ success ]; then
+if [ $success ]; then
     echo "Starting game"
     bin/main
 else
