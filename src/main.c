@@ -3,7 +3,7 @@
 #include "lcd.h"
 #include "sprite.h"
 
-uint8_t main(void)
+int main(void)
 {
     uint16_t tilesetW, tilesetH;
     uint8_t* tileset;
