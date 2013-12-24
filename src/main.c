@@ -7,15 +7,6 @@ int main(void)
 {
     lcd_init();
 
-    button_t old = lcd_getButtons();
-    button_t new = old;
-
-    for (int i = 0; i < 20; ++ i) {
-        while ((new = lcd_getButtons()) == old);
-
-        printf("Button: %i\n", (old = new));
-    }
-
     static color_t palette[4] = {
         CLR_FROM_RGB(0x18, 0x18, 0x18),
         CLR_FROM_RGB(0x58, 0xb8, 0xf8),
@@ -48,8 +39,21 @@ int main(void)
     int y = 0;
 
     do {
-        lcd_blitTilesPalette(tileset, palette, 16, 16, tilesetW / 16, tiles,
-            x++, y++, 160, 160, 80, 60, 160, 120);
+        if (lcd_buttonDown(BTN_1)) {
+            --y;
+        }
+        if (lcd_buttonDown(BTN_2)) {
+            ++x;
+        }
+        if (lcd_buttonDown(BTN_3)) {
+            --x;
+        }
+        if (lcd_buttonDown(BTN_4)) {
+            ++y;
+        }
+
+        lcd_blitTilesPalette(tileset, palette, 16, 16, tilesetW / 16,
+            tiles, x, y, 160, 160, 80, 60, 160, 120);
     } while (lcd_getButtons() == old);
 
     lcd_clear(CLR_BLACK);

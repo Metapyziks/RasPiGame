@@ -22,11 +22,11 @@
 #define CLR_WHITE CLR_FROM_RGB(0xff, 0xff, 0xff)
 #define CLR_BLACK CLR_FROM_RGB(0x00, 0x00, 0x00)
 
-#define BTN_1 0x01
-#define BTN_2 0x02
-#define BTN_3 0x03
-#define BTN_4 0x04
-#define BTN_5 0x05
+#define BTN_0 (1<<0)
+#define BTN_1 (1<<1)
+#define BTN_2 (1<<2)
+#define BTN_3 (1<<3)
+#define BTN_4 (1<<4)
 
 typedef uint16_t color_t;
 typedef uint8_t button_t;
@@ -68,5 +68,7 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
     int scaleX, int scaleY);
 
 button_t lcd_getButtons(void);
+
+int lcd_buttonDown(button_t button);
 
 #endif

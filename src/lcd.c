@@ -182,5 +182,12 @@ button_t lcd_getButtons(void)
         perror("_apps ioctl get");
     }
 
-    return buttons;
+    return ~buttons;
+}
+
+int lcd_buttonDown(button_t button)
+{
+    button_t down = lcd_getButtons();
+
+    return (down & button) == button;
 }
