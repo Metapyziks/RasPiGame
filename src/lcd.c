@@ -139,8 +139,8 @@ void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
     int srcTilesPerRow = srcW / tileW;
 
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = (srcX + i / scaleX) % srcW;
-        y = (srcY + j / scaleY) % srcH;
+        x = (srcX + i) % srcW;
+        y = (srcY + j) % srcH;
 
         tx = x / tileW;
         ty = y / tileH;
