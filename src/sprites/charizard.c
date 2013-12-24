@@ -1,6 +1,6 @@
 /* Auto generated sprite data for image charizard.png */
 
-unsigned char charizardPalette[13] = {
+color_t charizardPalette[13] = {
     CLR_FROM_RGB(0x20, 0x20, 0x00),
     CLR_FROM_RGB(0x00, 0x40, 0x40),
     CLR_FROM_RGB(0x80, 0x40, 0x00),
