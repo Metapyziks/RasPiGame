@@ -1,6 +1,7 @@
 #ifndef _LCD_H_
 #define _LCD_H_ 1
 
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -21,7 +22,13 @@
 #define CLR_WHITE CLR_FROM_RGB(0xff, 0xff, 0xff)
 #define CLR_BLACK CLR_FROM_RGB(0x00, 0x00, 0x00)
 
-typedef unsigned short int color_t;
+#define BTN_1 0x01
+#define BTN_2 0x02
+#define BTN_3 0x03
+#define BTN_4 0x04
+#define BTN_5 0x05
+
+typedef uint16_t color_t;
 
 int  lcd_init(void);
 void lcd_stop(void);
@@ -39,26 +46,26 @@ void lcd_blitSpriteScaled(color_t* sprite,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY);
 
-void lcd_blitSpritePalette(unsigned char* sprite, color_t* palette,
+void lcd_blitSpritePalette(uint8_t* sprite, color_t* palette,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH);
 
-void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
+void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY);
 
-void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, unsigned short int* tiles,
+void lcd_blitTilesPalette(uint8_t* tilemap, color_t* palette,
+    int tileW, int tileH, int tilesPerRow, uint16_t* tiles,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH);
 
-void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, unsigned short int* tiles,
+void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
+    int tileW, int tileH, int tilesPerRow, uint16_t* tiles,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY);
 
-unsigned char lcd_getButtons(void);
+uint8_t lcd_getButtons(void);
 
 #endif

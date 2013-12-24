@@ -3,11 +3,13 @@ BINDIR = bin
 
 HDR = \
 	$(SRCDIR)/utils.h \
-	$(SRCDIR)/lcd.h
+	$(SRCDIR)/lcd.h \
+	$(SRCDIR)/sprite.h
 
 SRC = \
 	$(SRCDIR)/main.c \
-	$(SRCDIR)/lcd.c
+	$(SRCDIR)/lcd.c \
+	$(SRCDIR)/sprite.c
 
 TARGET = main
 

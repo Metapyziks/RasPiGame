@@ -1,13 +1,16 @@
 #include <unistd.h>
 
 #include "lcd.h"
-#include "sprites/tileset.c"
+#include "sprite.h"
 
-int main(void)
+uint8_t main(void)
 {
+    uint16_t tilesetW, tilesetH;
+    uint8_t* tileset;
+
     lcd_init();
 
-    unsigned char old = lcd_getButtons();
+    uint8_t old = lcd_getButtons();
 
     static color_t palette[4] = {
         CLR_FROM_RGB(0x18, 0x18, 0x18),
@@ -16,7 +19,7 @@ int main(void)
         CLR_FROM_RGB(0xf8, 0xf8, 0xf8),
     };
 
-    static unsigned short int tiles[90] = {
+    static uint16_t tiles[100] = {
         226, 225, 226, 137,  17,  44,  44,  17, 137, 225,
         256, 255, 256, 137,  17,  44,  44,  17, 137, 255,
          17,  17,  17,  17,  17,  44,  44,  17,  17,  17,
@@ -26,20 +29,26 @@ int main(void)
         226, 225, 226, 137,  44,  44,  44,  44, 137, 225,
         256, 255, 256, 137,  44,  44,  44, 133, 137, 255,
         226, 225, 226, 137,  44,  44,  44,  44, 137, 225,
+        256, 255, 256, 137,  17,  44,  44,  17, 137, 255,
     };
+
+    tileset = sprite_fromFile("../res/tileset.pic", &tilesetW, &tilesetH);
 
     lcd_clear(CLR_BLACK);
 
-    int offset = 0;
+    uint8_t x = 0;
+    uint8_t y = 0;
 
     do {
-        lcd_blitTilesPaletteScaled(tileset, palette,
-            16, 16, 30, tiles, offset++, 0, 160, 144, 80, 48, 160, 144, 1, 1);
+        lcd_blitTilesPalette(tileset, palette, 16, 16, tilesetW / 16, tiles,
+            x, y, 160, 160, 80, 60, 160, 120);
     } while (lcd_getButtons() == old);
 
     lcd_clear(CLR_BLACK);
 
     lcd_stop();
+
+    free(tileset);
 
     return 0;
 }

@@ -1,7 +1,7 @@
 #include "lcd.h"
 
 #define SET_PIXEL(x, y, clr) (lcd_fbp[(x) + (y) * DISPLAY_WIDTH] = clr)
-#define SSD1289_GET_KEYS _IOR('K', 1, unsigned char *)
+#define SSD1289_GET_KEYS _IOR('K', 1, uint8_t *)
 
 static struct fb_fix_screeninfo lcd_finfo;
 static struct fb_var_screeninfo lcd_vinfo;
@@ -9,7 +9,7 @@ static struct fb_var_screeninfo lcd_vinfo;
 static long int lcd_screensize;
 
 static int lcd_fbfd;
-static unsigned short int* lcd_fbp;
+static uint16_t* lcd_fbp;
 
 int lcd_init(void)
 {
@@ -36,7 +36,7 @@ int lcd_init(void)
 
     lcd_screensize = lcd_vinfo.xres * lcd_vinfo.yres * (lcd_vinfo.bits_per_pixel >> 3);
 
-    lcd_fbp = (unsigned short int*) mmap(0, lcd_screensize,
+    lcd_fbp = (uint16_t*) mmap(0, lcd_screensize,
         PROT_READ | PROT_WRITE, MAP_SHARED, lcd_fbfd, 0);
 
     if ((int) lcd_fbp == -1) {
@@ -96,7 +96,7 @@ void lcd_blitSpriteScaled(color_t* sprite,
     }
 }
 
-void lcd_blitSpritePalette(unsigned char* sprite, color_t* palette,
+void lcd_blitSpritePalette(uint8_t* sprite, color_t* palette,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
@@ -106,13 +106,13 @@ void lcd_blitSpritePalette(unsigned char* sprite, color_t* palette,
         1, 1);
 }
 
-void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
+void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY)
 {
     int x, y;
-    unsigned char index;
+    uint8_t index;
 
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
         x = (srcX + i / scaleX) % srcW;
@@ -126,8 +126,8 @@ void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
     }
 }
 
-void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, unsigned short int* tiles,
+void lcd_blitTilesPalette(uint8_t* tilemap, color_t* palette,
+    int tileW, int tileH, int tilesPerRow, uint16_t* tiles,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
@@ -138,16 +138,16 @@ void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
         1, 1);
 }
 
-void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, unsigned short int* tiles,
+void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
+    int tileW, int tileH, int tilesPerRow, uint16_t* tiles,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY)
 {
     int x, y, tx, ty, dx, dy;
     int tileX, tileY;
-    unsigned short int tileIndex;
-    unsigned char index;
+    uint16_t tileIndex;
+    uint8_t index;
 
     int srcTilesPerRow = srcW / tileW;
 
@@ -174,9 +174,9 @@ void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
     }
 }
 
-unsigned char lcd_getButtons(void)
+uint8_t lcd_getButtons(void)
 {
-    unsigned char buttons;
+    uint8_t buttons;
  
     if (ioctl(lcd_fbfd, SSD1289_GET_KEYS, &buttons) == -1) {
         perror("_apps ioctl get");
