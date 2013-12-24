@@ -89,8 +89,8 @@ void lcd_blitSpriteScaled(color_t* sprite,
     int x, y;
 
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = (srcX + i / scaleX) % srcW;
-        y = (srcY + j / scaleY) % srcH;
+        x = WRAP(srcX + i / scaleX, srcW);
+        y = WRAP(srcY + j / scaleY, srcH);
 
         SET_PIXEL(dstX + i, dstY + j, sprite[x + y * srcW]);
     }
@@ -115,8 +115,8 @@ void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
     uint8_t index;
 
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = (srcX + i / scaleX) % srcW;
-        y = (srcY + j / scaleY) % srcH;
+        x = WRAP(srcX + i / scaleX, srcW);
+        y = WRAP(srcY + j / scaleY, srcH);
         
         index = sprite[x + y * srcW];
 
@@ -152,8 +152,8 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
     int srcTilesPerRow = srcW / tileW;
 
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = (srcX + i / scaleX) % srcW;
-        y = (srcY + j / scaleY) % srcH;
+        x = WRAP(srcX + i / scaleX, srcW);
+        y = WRAP(srcY + j / scaleY, srcH);
 
         tx = x / tileW;
         ty = y / tileH;

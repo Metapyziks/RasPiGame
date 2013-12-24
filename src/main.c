@@ -39,18 +39,10 @@ int main(void)
     int y = 0;
 
     do {
-        if (lcd_buttonDown(BTN_1)) {
-            --y;
-        }
-        if (lcd_buttonDown(BTN_2)) {
-            ++x;
-        }
-        if (lcd_buttonDown(BTN_3)) {
-            --x;
-        }
-        if (lcd_buttonDown(BTN_4)) {
-            ++y;
-        }
+        if (lcd_buttonDown(BTN_1)) ++y;
+        if (lcd_buttonDown(BTN_2)) ++x;
+        if (lcd_buttonDown(BTN_3)) --x;
+        if (lcd_buttonDown(BTN_4)) --y;
 
         lcd_blitTilesPalette(tileset, palette, 16, 16, tilesetW / 16,
             tiles, x, y, 160, 160, 80, 60, 160, 120);
