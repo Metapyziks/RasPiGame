@@ -54,7 +54,7 @@ void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
 
 void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
     int tileW, int tileH, int tilesPerRow, int tileID,
-    int dstX, int dstY, int dstW, int dstH),
+    int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY);
 
 unsigned char lcd_getButtons(void);
