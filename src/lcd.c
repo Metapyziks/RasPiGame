@@ -75,11 +75,22 @@ void lcd_blitSprite(color_t* sprite,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
+    lcd_blitSprite(sprite,
+        srcX, srcY, srcW, srcH,
+        dstX, dstY, dstW, dstH,
+        1, 1);
+}
+
+void lcd_blitSpriteScaled(color_t* sprite,
+    int srcX, int srcY, int srcW, int srcH,
+    int dstX, int dstY, int dstW, int dstH,
+    int scaleX, int scaleY)
+{
     int x, y;
 
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = (srcX + i) % srcW;
-        y = (srcY + j) % srcH;
+        x = (srcX + i / scaleX) % srcW;
+        y = (srcY + j / scaleY) % srcH;
 
         SET_PIXEL(dstX + i, dstY + j, sprite[x + y * srcW]);
     }
@@ -89,8 +100,10 @@ void lcd_blitSpritePalette(unsigned char* sprite, color_t* palette,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
-    lcd_blitSpritePaletteScaled(sprite, palette, srcX, srcY,
-        srcW, srcH, dstX, dstY, dstW, dstH, 1, 1);
+    lcd_blitSpritePaletteScaled(sprite, palette,
+        srcX, srcY, srcW, srcH,
+        dstX, dstY, dstW, dstH,
+        1, 1);
 }
 
 void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
@@ -111,6 +124,33 @@ void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
             SET_PIXEL(dstX + i, dstY + j, palette[index]);
         }
     }
+}
+
+void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
+    int tileW, int tileH, int tilesPerRow, int tileID,
+    int dstX, int dstY, int dstW, int dstH)
+{
+    int srcX = (tileID % tilesPerRow) * tileW;
+    int srcY = (tileID / tilesPerRow) * tileH;
+
+    lcd_blitSpritePaletteScaled(tilemap, palette,
+        srcX, srcY, tileW, tileH,
+        dstX, dstY, dstW, dstH,
+        1, 1);
+}
+
+void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
+    int tileW, int tileH, int tilesPerRow, int tileID,
+    int dstX, int dstY, int dstW, int dstH,
+    int scaleX, int scaleY)
+{
+    int srcX = (tileID % tilesPerRow) * tileW;
+    int srcY = (tileID / tilesPerRow) * tileH;
+
+    lcd_blitSpritePaletteScaled(tilemap, palette,
+        srcX, srcY, tileW, tileH,
+        dstX, dstY, dstW, dstH,
+        scaleX, scaleY);
 }
 
 unsigned char lcd_getButtons(void)
