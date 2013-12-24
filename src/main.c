@@ -37,8 +37,8 @@ int main(void)
 
     lcd_clear(CLR_BLACK);
 
-    uint8_t x = 0;
-    uint8_t y = 0;
+    int x = 0;
+    int y = 0;
 
     do {
         lcd_blitTilesPalette(tileset, palette, 16, 16, tilesetW / 16, tiles,
