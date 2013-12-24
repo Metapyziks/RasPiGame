@@ -1,6 +1,6 @@
 #include "sprite.h"
 
-#define SPRITE_ERROR_MSG(msg) "Error loading sprite '%s':"msg"\n", path
+#define SPRITE_ERROR_MSG(msg) "Error loading sprite '%s': "msg"\n", path
 
 uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
 {
