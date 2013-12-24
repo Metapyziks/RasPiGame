@@ -34,7 +34,6 @@ int main(void)
     do {
         lcd_blitTilesPaletteScaled(tileset, palette,
             16, 16, 30, tiles, offset++, 8, 160, 128, 0, 0, 320, 240, 1, 1);
-        usleep(16);
     } while (lcd_getButtons() == old);
 
     lcd_clear(CLR_BLACK);
