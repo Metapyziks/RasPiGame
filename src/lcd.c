@@ -75,7 +75,7 @@ void lcd_blitSprite(color_t* sprite,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
-    lcd_blitSprite(sprite,
+    lcd_blitSpriteScaled(sprite,
         srcX, srcY, srcW, srcH,
         dstX, dstY, dstW, dstH,
         1, 1);
