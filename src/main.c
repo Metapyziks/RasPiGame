@@ -5,9 +5,6 @@
 
 int main(void)
 {
-    uint16_t tilesetW, tilesetH;
-    uint8_t* tileset;
-
     lcd_init();
 
     uint8_t old = lcd_getButtons();
@@ -31,6 +28,10 @@ int main(void)
         226, 225, 226, 137,  44,  44,  44,  44, 137, 225,
         256, 255, 256, 137,  17,  44,  44,  17, 137, 255,
     };
+    
+    uint16_t tilesetW = 0;
+    uint16_t tilesetH = 0;
+    uint8_t* tileset = NULL;
 
     tileset = sprite_fromFile("../res/tileset.pic", &tilesetW, &tilesetH);
 
