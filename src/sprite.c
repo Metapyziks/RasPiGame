@@ -5,9 +5,9 @@ uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
     FILE* fp;
     unsigned int ident;
 
-    fp = fopen(path, "r");
-
     printf("Attempting to load %s", path);
+
+    fp = fopen(path, "r");
 
     fread(&ident, 4, 1, fp);
 
