@@ -7,7 +7,14 @@ int main(void)
 {
     lcd_init();
 
-    uint8_t old = lcd_getButtons();
+    button_t old = lcd_getButtons();
+    button_t new = old;
+
+    for (int i = 0; i < 20; ++ i) {
+        while ((new = lcd_getButtons()) == old);
+
+        printf("Button: %i\n", (old = new));
+    }
 
     static color_t palette[4] = {
         CLR_FROM_RGB(0x18, 0x18, 0x18),

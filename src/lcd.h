@@ -29,6 +29,7 @@
 #define BTN_5 0x05
 
 typedef uint16_t color_t;
+typedef uint8_t button_t;
 
 int  lcd_init(void);
 void lcd_stop(void);
@@ -66,6 +67,6 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY);
 
-uint8_t lcd_getButtons(void);
+button_t lcd_getButtons(void);
 
 #endif

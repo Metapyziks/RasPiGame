@@ -174,9 +174,9 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
     }
 }
 
-uint8_t lcd_getButtons(void)
+button_t lcd_getButtons(void)
 {
-    uint8_t buttons;
+    button_t buttons;
  
     if (ioctl(lcd_fbfd, SSD1289_GET_KEYS, &buttons) == -1) {
         perror("_apps ioctl get");
