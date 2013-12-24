@@ -18,7 +18,7 @@ uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
 
     fread(&ident, 4, 1, fp);
 
-    if (ident != 0x50494354) {
+    if (ident != 0x54434950) {
         fprintf(stderr, SPRITE_ERROR_MSG("Bad file format"));
         exit(1);
     }
