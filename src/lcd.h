@@ -49,13 +49,9 @@ void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
     int scaleX, int scaleY);
 
 void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, int tileID,
+    int tileW, int tileH, int tilesPerRow, unsigned short int* tiles,
+    int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH);
-
-void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, int tileID,
-    int dstX, int dstY, int dstW, int dstH,
-    int scaleX, int scaleY);
 
 unsigned char lcd_getButtons(void);
 

@@ -127,34 +127,33 @@ void lcd_blitSpritePaletteScaled(unsigned char* sprite, color_t* palette,
 }
 
 void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, int tileID,
+    int tileW, int tileH, int tilesPerRow, unsigned short int* tiles,
+    int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
-    lcd_blitTilesPaletteScaled(tilemap, palette,
-        tileW, tileH, tilesPerRow, tileID,
-        dstX, dstY, dstW, dstH,
-        1, 1);
-}
-
-void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, int tileID,
-    int dstX, int dstY, int dstW, int dstH,
-    int scaleX, int scaleY)
-{
-    int srcX = (tileID % tilesPerRow) * tileW;
-    int srcY = (tileID / tilesPerRow) * tileH;
-
-    int minX = (srcX / tileW) * tileW;
-    int minY = (srcY / tileH) * tileH;
-
-    int x, y;
+    int x, y, tx, ty, dx, dy;
+    int tileX, tileY;
+    unsigned short int tileIndex;
     unsigned char index;
 
+    int srcTilesPerRow = srcW / tileW;
+
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = minX + (srcX + i / scaleX) % tileW;
-        y = minY + (srcY + j / scaleY) % tileH;
+        x = (srcX + i / scaleX) % srcW;
+        y = (srcY + j / scaleY) % srcH;
+
+        tx = x / tileW;
+        ty = y / tileH;
+
+        dx = x % tileW;
+        dy = y % tileH;
+
+        tileIndex = tiles[tx + ty * srcTilesPerRow];
+
+        tileX = (tileIndex % tilesPerRow) * tileW;
+        tileY = (tileIndex / tilesPerRow) * tileH;
         
-        index = tilemap[x + y * tilesPerRow * tileW];
+        index = tilemap[tileX + dx + (tileY + dy) * tilesPerRow * tileW];
 
         if (index != 0xff) {
             SET_PIXEL(dstX + i, dstY + j, palette[index]);
