@@ -35,7 +35,7 @@ uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
         exit(1);
     }
 
-    fclose(file);
+    fclose(fp);
 
     return sprite;
 }
