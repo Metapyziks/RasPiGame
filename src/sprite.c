@@ -7,6 +7,8 @@ uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
 
     fp = fopen(path, "r");
 
+    printf("Attempting to load %s", path);
+
     fread(&ident, 4, 1, fp);
 
     if (ident != 0x50494354) {
