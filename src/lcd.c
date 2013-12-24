@@ -131,6 +131,19 @@ void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
+    lcd_blitTilesPaletteScaled(tilemap, palette,
+        tileW, tileH, tilesPerRow, tiles,
+        srcX, srcY, srcW, srcH,
+        dstX, dstY, dstW, dstH,
+        1, 1);
+}
+
+void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
+    int tileW, int tileH, int tilesPerRow, unsigned short int* tiles,
+    int srcX, int srcY, int srcW, int srcH,
+    int dstX, int dstY, int dstW, int dstH,
+    int scaleX, int scaleY)
+{
     int x, y, tx, ty, dx, dy;
     int tileX, tileY;
     unsigned short int tileIndex;
@@ -139,8 +152,8 @@ void lcd_blitTilesPalette(unsigned char* tilemap, color_t* palette,
     int srcTilesPerRow = srcW / tileW;
 
     for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = (srcX + i) % srcW;
-        y = (srcY + j) % srcH;
+        x = (srcX + i / scaleX) % srcW;
+        y = (srcY + j / scaleY) % srcH;
 
         tx = x / tileW;
         ty = y / tileH;

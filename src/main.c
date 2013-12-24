@@ -29,9 +29,9 @@ int main(void)
     };
 
     lcd_clear(CLR_BLACK);
-    
-    lcd_blitTilesPalette(tileset, palette,
-        16, 16, 30, tiles, 0, 0, 160, 144, 0, 0, 160, 144);
+
+    lcd_blitTilesPaletteScaled(tileset, palette,
+        16, 16, 30, tiles, 0, 0, 160, 144, 0, 0, 320, 240, 2, 2);
 
     while (lcd_getButtons() == old) {
         usleep(10);
