@@ -154,7 +154,7 @@ void lcd_blitTilesPaletteScaled(unsigned char* tilemap, color_t* palette,
         x = minX + (srcX + i / scaleX) % tileW;
         y = minY + (srcY + j / scaleY) % tileH;
         
-        index = sprite[x + y * tilesPerRow * tileW];
+        index = tilemap[x + y * tilesPerRow * tileW];
 
         if (index != 0xff) {
             SET_PIXEL(dstX + i, dstY + j, palette[index]);
