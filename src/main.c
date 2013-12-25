@@ -43,15 +43,23 @@ void displayFunc(void)
         256, 255, 256, 137,  17,  44,  44,  17, 137, 255,
     };
 
+    lcd_clear(CLR_FROM_RGB(0xff, 0x00, 0xff));
+
+    /*
     lcd_blitTilesPaletteScaled(tileset, palette, 16, 16, tilesetW / 16,
         tiles, cameraX, cameraY, 160, 160, 0, 0, 320, 240, 2, 2);
+    */
+
+    for (int i = 4; i < 316; ++ i) {
+        lcd_setPixel(i, 4, palette[0]);
+    }
 
     lcd_swapBuffers();
 }
 
 int main(void)
 {
-    tileset = sprite_fromFile("res/tileset.pic", &tilesetW, &tilesetH);
+    // tileset = sprite_fromFile("res/tileset.pic", &tilesetW, &tilesetH);
 
     lcd_init();
     lcd_clear(CLR_BLACK);

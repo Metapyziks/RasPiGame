@@ -1,3 +1,6 @@
+#include <string.h>
+#include <stdlib.h>
+
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <GL/glut.h>
@@ -21,8 +24,10 @@ int lcd_init(void)
 
     glutInit(&argc, argv);
     glutInitWindowSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("RasPiGame");
+
+    glEnable(GL_DEPTH_TEST);
 
     return TRUE;
 }
@@ -39,18 +44,25 @@ void lcd_stop(void)
 
 void lcd_swapBuffers(void)
 {
+    GLenum ec = glGetError();
+    if (ec != GL_NO_ERROR) {
+        printf("Some kind of error or something: %s\n", gluErrorString(ec));
+    }
+
     glutSwapBuffers();
 }
 
 void lcd_setPixel(int x, int y, color_t clr)
 {
-    glDrawPixels(1, 1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, &clr);
+    glColor3f((clr & 0xf800) / (float) 0xf800, (clr & 0x7e0) / (float) 0x7e0, (clr & 0x1f) / (float) 0x1f);
+    glRectf(x / (float) DISPLAY_WIDTH, y / (float) DISPLAY_HEIGHT,
+        (x + 1) / (float) DISPLAY_WIDTH, (y + 1) / (float) DISPLAY_HEIGHT);
 }
 
 void lcd_clear(color_t clr)
 {
-    glClearColor((clr & 0xf800) / (float) 0xf800, (clr & 0x7e0) / (float) 0x7e0, (clr & 0x1f) / (float) 0x1f, 1.0f); 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor((clr & 0xf800) / (float) 0xf800, (clr & 0x7e0) / (float) 0x7e0, (clr & 0x1f) / (float) 0x1f, 1.f); 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void lcd_blitSprite(color_t* sprite,
