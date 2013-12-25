@@ -2,10 +2,10 @@ SRCDIR = src
 BINDIR = bin
 
 WIN-SRC = \
-	$(SRCDIR)/win/lcd.c
+	$(SRCDIR)/lcd_win.c
 
 RPI-SRC = \
-	$(SRCDIR)/rpi/lcd.c
+	$(SRCDIR)/lcd_rpi.c
 
 HDR = \
 	$(SRCDIR)/utils.h \
@@ -15,6 +15,9 @@ HDR = \
 SRC = \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/sprite.c
+
+AUX = \
+	$(SRCDIR)/lcd.c
 
 CFLAGS = -std=c99 -O3 -Wall -Wcast-align -Wcast-qual -Wimplicit \
 	   -Wmissing-declarations -Wmissing-prototypes -Wnested-externs \
@@ -32,6 +35,6 @@ else
 	CFLAGS += -D RPI
 endif
 
-$(BINDIR)/$(TARGET): $(SRC) $(HDR) Makefile
+$(BINDIR)/$(TARGET): $(SRC) $(AUX) $(HDR) Makefile
 	mkdir -p $(BINDIR)
 	gcc $(SRC) $(CFLAGS) -o $(BINDIR)/$(TARGET)
