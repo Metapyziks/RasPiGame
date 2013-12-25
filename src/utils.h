@@ -4,6 +4,9 @@
 #define TRUE 1
 #define FALSE 0
 
-#define WRAP(x, w) ((x) >= 0 ? (x) % (w) : ((w) - 1) - ((-1 - (x)) % (w)))
+#define WRAP(x, y) ((x) >= 0 ? (x) % (y) : ((y) - 1) - ((-1 - (x)) % (y)))
+
+#define FLOOR(x, y) (((x) >= 0 ? (x) : ((x) - ((y) - 1))) / (y))
+#define CEIL(x, y) (((x) >= 0 ? ((x) + (y) - 1) : (x)) / (y))
 
 #endif

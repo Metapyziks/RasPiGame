@@ -144,32 +144,45 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY)
 {
-    int x, y, tx, ty, dx, dy;
-    int tileX, tileY;
-    uint16_t tileIndex;
-    uint8_t index;
+    int srcCols = srcW / tileW;
+    int srcRows = srcH / tileH;
 
-    int srcTilesPerRow = srcW / tileW;
+    int minI = srcX;
+    int minJ = srcY;
+    int maxI = srcX + dstW / scaleX;
+    int maxJ = srcY + dstH / scaleY;
 
-    for (int i = 0; i < dstW; ++i) for (int j = 0; j < dstH; ++j) {
-        x = WRAP(srcX + i / scaleX, srcW);
-        y = WRAP(srcY + j / scaleY, srcH);
+    minI = FLOOR(minI, tileW);
+    minJ = FLOOR(minJ, tileH);
+    maxI = CEIL(maxI, tileW);
+    maxJ = CEIL(maxJ, tileH);
 
-        tx = x / tileW;
-        ty = y / tileH;
+    for (int i = minI; i < maxI; ++i) {
+        int tx = WRAP(i, srcCols);
+        int minX = dstX + ((i * tileW) - srcX) * scaleX;
+        for (int j = minJ; j < maxJ; ++j) {
+            int ty = WRAP(j, srcRows);
+            int minY = dstY + ((j * tileH) - srcY) * scaleY;
 
-        dx = x % tileW;
-        dy = y % tileH;
+            int tileIndex = tiles[tx + ty * srcCols];
 
-        tileIndex = tiles[tx + ty * srcTilesPerRow];
+            int tileX = (tileIndex % tilesPerRow) * tileW;
+            int tileY = (tileIndex / tilesPerRow) * tileH;
 
-        tileX = (tileIndex % tilesPerRow) * tileW;
-        tileY = (tileIndex / tilesPerRow) * tileH;
-        
-        index = tilemap[tileX + dx + (tileY + dy) * tilesPerRow * tileW];
+            for (int dx = 0; dx < tileW * scaleX; ++dx) {
+                int sx = minX + dx;
+                int tmX = tileX + dx / scaleX;
+                for (int dy = 0; dy < tileH * scaleY; ++dy) {
+                    int sy = minY + dy;
+                    int tmY = tileY + dy / scaleY;
 
-        if (index != 0xff) {
-            SET_PIXEL(dstX + i, dstY + j, palette[index]);
+                    uint8_t index = tilemap[tmX + tmY * tilesPerRow * tileW];
+
+                    if (index != 0xff) {
+                        SET_PIXEL(sx, sy, palette[index]);
+                    }
+                }
+            }
         }
     }
 }
