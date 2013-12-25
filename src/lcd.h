@@ -2,15 +2,6 @@
 #define _LCD_H_ 1
 
 #include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <linux/fb.h>
 
 #include "utils.h"
 
@@ -31,8 +22,14 @@
 typedef uint16_t color_t;
 typedef uint8_t button_t;
 
-int  lcd_init(void);
+void lcd_idleFunc(void (*idleFunc)(void));
+void lcd_displayFunc(void (*displayFunc)(void));
+
+int lcd_init(void);
+void lcd_mainLoop(void);
 void lcd_stop(void);
+
+void lcd_swapBuffers(void);
 
 void lcd_setPixel(int x, int y, color_t clr);
 

@@ -1,4 +1,14 @@
-#include "lcd.h"
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <linux/fb.h>
+
+#include "../lcd.h"
 
 #define SET_PIXEL(x, y, clr) (lcd_fbp[(x) + (y) * DISPLAY_WIDTH] = clr)
 #define SSD1289_GET_KEYS _IOR('K', 1, uint8_t *)
