@@ -5,6 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height);
+uint8_t* sprite_fromFile(const char* path, int* width, int* height, int* tiles);
 
 #endif

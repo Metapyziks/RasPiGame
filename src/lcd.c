@@ -66,19 +66,19 @@ void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
 }
 
 void lcd_blitTilesPalette(uint8_t* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, uint16_t* tiles,
+    uint16_t* tiles, int tileW, int tileH,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH)
 {
     lcd_blitTilesPaletteScaled(tilemap, palette,
-        tileW, tileH, tilesPerRow, tiles,
+        tiles, tileW, tileH,
         srcX, srcY, srcW, srcH,
         dstX, dstY, dstW, dstH,
         1, 1);
 }
 
 void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, uint16_t* tiles,
+    uint16_t* tiles, int tileW, int tileH,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY)
@@ -114,18 +114,15 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
 
             int tileIndex = tiles[tx + ty * srcCols];
 
-            int tileX = (tileIndex % tilesPerRow) * tileW;
-            int tileY = (tileIndex / tilesPerRow) * tileH;
+            int tileOffset = tileIndex * tileW * tileH;
 
             for (int dy = minY; dy < maxY; ++dy) {
                 int sy = dstY + oy + dy;
-                int tmY = tileY + dy / scaleY;
 
                 for (int dx = minX; dx < maxX; ++dx) {
                     int sx = dstX + ox + dx;
-                    int tmX = tileX + dx / scaleX;
 
-                    uint8_t index = tilemap[tmX + tmY * tilesPerRow * tileW];
+                    uint8_t index = tilemap[tileOffset + dx / scaleX + dy / scaleY * tileW];
 
                     if (index != 0xff) {
                         SET_PIXEL(sx, sy, palette[index]);

@@ -6,11 +6,11 @@
 void idleFunc(void);
 void displayFunc(void);
 
-static int cameraX = 0;
-static int cameraY = 0;
+static int cameraX = 8;
+static int cameraY = 8;
 
-static uint16_t tilesetW = 0;
-static uint16_t tilesetH = 0;
+static int tilesetW = 0;
+static int tilesetH = 0;
 static uint8_t* tileset = NULL;
 
 void idleFunc(void)
@@ -43,15 +43,16 @@ void displayFunc(void)
         256, 255, 256, 137,  17,  44,  44,  17, 137, 255,
     };
 
-    lcd_blitTilesPaletteScaled(tileset, palette, 16, 16, tilesetW / 16,
-        tiles, cameraX, cameraY, 160, 160, 80, 48, 160, 144, 1, 1);
+    lcd_blitTilesPaletteScaled(tileset, palette, tiles, tilesetW, tilesetH,
+        cameraX - 80, cameraY - 72, 160, 160, 80, 48, 160, 144, 1, 1);
 
     lcd_swapBuffers();
 }
 
 int main(void)
 {
-    tileset = sprite_fromFile("res/tileset.pic", &tilesetW, &tilesetH);
+    int tiles = 0;
+    tileset = sprite_fromFile("res/tileset.pic", &tilesetW, &tilesetH, &tiles);
 
     lcd_init();
     lcd_clear(CLR_BLACK);

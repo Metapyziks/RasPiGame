@@ -54,12 +54,12 @@ void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
     int scaleX, int scaleY);
 
 void lcd_blitTilesPalette(uint8_t* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, uint16_t* tiles,
+    uint16_t* tiles, int tileW, int tileH,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH);
 
 void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
-    int tileW, int tileH, int tilesPerRow, uint16_t* tiles,
+    uint16_t* tiles, int tileW, int tileH,
     int srcX, int srcY, int srcW, int srcH,
     int dstX, int dstY, int dstW, int dstH,
     int scaleX, int scaleY);

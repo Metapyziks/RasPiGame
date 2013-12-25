@@ -2,7 +2,7 @@
 
 #define SPRITE_ERROR_MSG(msg) "Error loading sprite '%s': "msg"\n", path
 
-uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
+uint8_t* sprite_fromFile(const char* path, int* width, int* height, int* tiles)
 {
     FILE* fp = NULL;
     uint32_t ident = 0;
@@ -23,12 +23,13 @@ uint8_t* sprite_fromFile(const char* path, uint16_t* width, uint16_t* height)
         exit(1);
     }
 
-    fread(width, 2, 1, fp);
-    fread(height, 2, 1, fp);
+    fread(width, 4, 1, fp);
+    fread(height, 4, 1, fp);
+    fread(tiles, 4, 1, fp);
 
-    printf("Loading %s (%ix%i)\n", path, *width, *height);
+    printf("Loading %s (%ix%ix%i)\n", path, *width, *height, *tiles);
 
-    int size = *width * *height;
+    int size = *width * *height * *tiles;
 
     uint8_t* sprite = (uint8_t*) malloc(size);
 
