@@ -7,6 +7,10 @@
 
 #include "../lcd.h"
 
+#define SET_PIXEL(x, y, clr) (fb[(x) + (DISPLAY_HEIGHT - y - 1) * DISPLAY_WIDTH] = clr)
+
+static color_t fb[DISPLAY_WIDTH * DISPLAY_HEIGHT];
+
 void lcd_idleFunc(void (*idleFunc)(void))
 {
     glutIdleFunc(idleFunc);
@@ -24,10 +28,8 @@ int lcd_init(void)
 
     glutInit(&argc, argv);
     glutInitWindowSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutCreateWindow("RasPiGame");
-
-    glEnable(GL_DEPTH_TEST);
 
     return TRUE;
 }
@@ -44,25 +46,21 @@ void lcd_stop(void)
 
 void lcd_swapBuffers(void)
 {
-    GLenum ec = glGetError();
-    if (ec != GL_NO_ERROR) {
-        printf("Some kind of error or something: %s\n", gluErrorString(ec));
-    }
-
+    glRasterPos2i(-1, -1);
+    glDrawPixels(DISPLAY_WIDTH, DISPLAY_HEIGHT, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, fb);
     glutSwapBuffers();
 }
 
 void lcd_setPixel(int x, int y, color_t clr)
 {
-    glColor3f((clr & 0xf800) / (float) 0xf800, (clr & 0x7e0) / (float) 0x7e0, (clr & 0x1f) / (float) 0x1f);
-    glRectf(x / (float) DISPLAY_WIDTH, y / (float) DISPLAY_HEIGHT,
-        (x + 1) / (float) DISPLAY_WIDTH, (y + 1) / (float) DISPLAY_HEIGHT);
+    SET_PIXEL(x, y, clr);
 }
 
 void lcd_clear(color_t clr)
 {
-    glClearColor((clr & 0xf800) / (float) 0xf800, (clr & 0x7e0) / (float) 0x7e0, (clr & 0x1f) / (float) 0x1f, 1.f); 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    for (int y = 0; y < DISPLAY_HEIGHT; ++y) for (int x = 0; x < DISPLAY_WIDTH; ++x) {
+        SET_PIXEL(x, y, clr);
+    }
 }
 
 void lcd_blitSprite(color_t* sprite,
@@ -86,7 +84,7 @@ void lcd_blitSpriteScaled(color_t* sprite,
         x = WRAP(srcX + i / scaleX, srcW);
         y = WRAP(srcY + j / scaleY, srcH);
 
-        lcd_setPixel(dstX + i, dstY + j, sprite[x + y * srcW]);
+        SET_PIXEL(dstX + i, dstY + j, sprite[x + y * srcW]);
     }
 }
 
@@ -115,7 +113,7 @@ void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
         index = sprite[x + y * srcW];
 
         if (index != 0xff) {
-            lcd_setPixel(dstX + i, dstY + j, palette[index]);
+            SET_PIXEL(dstX + i, dstY + j, palette[index]);
         }
     }
 }
@@ -183,7 +181,7 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
                     uint8_t index = tilemap[tmX + tmY * tilesPerRow * tileW];
 
                     if (index != 0xff) {
-                        lcd_setPixel(sx, sy, palette[index]);
+                        SET_PIXEL(sx, sy, palette[index]);
                     }
                 }
             }
