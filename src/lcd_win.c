@@ -10,6 +10,7 @@
 #define SET_PIXEL(x, y, clr) (fb[(x) + (DISPLAY_HEIGHT - y - 1) * DISPLAY_WIDTH] = clr)
 
 static color_t fb[DISPLAY_WIDTH * DISPLAY_HEIGHT];
+static button_t pressedButtons;
 
 void lcd_idleFunc(void (*idleFunc)(void))
 {
@@ -21,6 +22,34 @@ void lcd_displayFunc(void (*displayFunc)(void))
     glutDisplayFunc(displayFunc);
 }
 
+static void onKeyUpFunc(uint8_t key, int x, int y)
+{
+    switch (key) {
+        case 'w':
+            pressedButtons &= ~BTN_4; break;
+        case 'a':
+            pressedButtons &= ~BTN_3; break;
+        case 'd':
+            pressedButtons &= ~BTN_2; break;
+        case 's':
+            pressedButtons &= ~BTN_1; break;
+    }
+}
+
+static void onKeyDownFunc(uint8_t key, int x, int y)
+{
+    switch (key) {
+        case 'w':
+            pressedButtons |= BTN_4; break;
+        case 'a':
+            pressedButtons |= BTN_3; break;
+        case 'd':
+            pressedButtons |= BTN_2; break;
+        case 's':
+            pressedButtons |= BTN_1; break;
+    }
+}
+
 int lcd_init(void)
 {
     int argc = 0;
@@ -30,6 +59,9 @@ int lcd_init(void)
     glutInitWindowSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutCreateWindow("RasPiGame");
+
+    glutKeyboardFunc(onKeyDownFunc);
+    glutKeyboardUpFunc(onKeyUpFunc);
 
     return TRUE;
 }
@@ -55,10 +87,10 @@ void lcd_swapBuffers(void)
 
 button_t lcd_getButtons(void)
 {
-    return 0;
+    return pressedButtons;
 }
 
 int lcd_buttonDown(button_t button)
 {
-    return FALSE;
+    return (pressedButtons & button) == button;
 }
