@@ -90,6 +90,11 @@ void lcd_stop(void)
     close(lcd_fbfd);
 }
 
+void lcd_swapBuffers(void)
+{
+    return;
+}
+
 #include "lcd.c"
 
 button_t lcd_getButtons(void)
