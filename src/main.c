@@ -43,8 +43,6 @@ void displayFunc(void)
         256, 255, 256, 137,  17,  44,  44,  17, 137, 255,
     };
 
-    lcd_clear(palette[2]);
-
     lcd_blitTilesPaletteScaled(tileset, palette, 16, 16, tilesetW / 16,
         tiles, cameraX, cameraY, 160, 160, 0, 0, 320, 240, 2, 2);
 
