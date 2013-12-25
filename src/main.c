@@ -44,7 +44,7 @@ void displayFunc(void)
     };
 
     lcd_blitTilesPaletteScaled(tileset, palette, 16, 16, tilesetW / 16,
-        tiles, cameraX, cameraY, 160, 160, 80, 48, 160, 144, 1, 1);
+        tiles, cameraX, cameraY, 160, 160, 40, 48, 160, 144, 1, 1);
 
     lcd_swapBuffers();
 }
