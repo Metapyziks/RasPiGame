@@ -4,6 +4,9 @@
 #define TRUE 1
 #define FALSE 0
 
+#define MIN(x, y) ((x) <= (y) ? (x) : (y))
+#define MAX(x, y) ((x) >= (y) ? (x) : (y))
+
 #define WRAP(x, y) ((x) >= 0 ? (x) % (y) : ((y) - 1) - ((-1 - (x)) % (y)))
 
 #define FLOOR(x, y) (((x) >= 0 ? (x) : ((x) - ((y) - 1))) / (y))

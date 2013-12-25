@@ -159,21 +159,30 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
 
     for (int i = minI; i < maxI; ++i) {
         int tx = WRAP(i, srcCols);
-        int minX = dstX + ((i * tileW) - srcX) * scaleX;
+        int ox = ((i * tileW) - srcX) * scaleX;
+        int px = dstX - (ox + tileW + scaleX);
+
+        int minX = MAX(0, -ox);
+        int maxX = tileW * scaleX + MIN(0, px);
+
         for (int j = minJ; j < maxJ; ++j) {
             int ty = WRAP(j, srcRows);
-            int minY = dstY + ((j * tileH) - srcY) * scaleY;
+            int oy = ((j * tileH) - srcY) * scaleY;
+            int py = dstY - (oy + tileH + scaleY);
+
+            int minY = MAX(0, -oy);
+            int maxY = tileH * scaleY + MIN(0, py);
 
             int tileIndex = tiles[tx + ty * srcCols];
 
             int tileX = (tileIndex % tilesPerRow) * tileW;
             int tileY = (tileIndex / tilesPerRow) * tileH;
 
-            for (int dx = 0; dx < tileW * scaleX; ++dx) {
-                int sx = minX + dx;
+            for (int dx = minX; dx < maxX; ++dx) {
+                int sx = dstX + ox + dx;
                 int tmX = tileX + dx / scaleX;
-                for (int dy = 0; dy < tileH * scaleY; ++dy) {
-                    int sy = minY + dy;
+                for (int dy = minY; dy < maxY; ++dy) {
+                    int sy = dstY + oy + dy;
                     int tmY = tileY + dy / scaleY;
 
                     uint8_t index = tilemap[tmX + tmY * tilesPerRow * tileW];
