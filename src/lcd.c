@@ -157,34 +157,35 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
     maxI = CEIL(maxI, tileW);
     maxJ = CEIL(maxJ, tileH);
 
-    for (int i = minI; i < maxI; ++i) {
-        int tx = WRAP(i, srcCols);
-        int ox = ((i * tileW) - srcX) * scaleX;
-        int px = dstW - (ox + tileW + scaleX);
+    for (int j = minJ; j < maxJ; ++j) {
+        int ty = WRAP(j, srcRows);
+        int oy = ((j * tileH) - srcY) * scaleY;
+        int py = dstH - (oy + tileH + scaleY);
 
-        int minX = MAX(0, -ox);
-        int maxX = tileW * scaleX + MIN(0, px);
+        int minY = MAX(0, -oy);
+        int maxY = tileH * scaleY + MIN(0, py);
 
-        for (int j = minJ; j < maxJ; ++j) {
-            int ty = WRAP(j, srcRows);
-            int oy = ((j * tileH) - srcY) * scaleY;
-            int py = dstH - (oy + tileH + scaleY);
+        for (int i = minI; i < maxI; ++i) {
+            int tx = WRAP(i, srcCols);
+            int ox = ((i * tileW) - srcX) * scaleX;
+            int px = dstW - (ox + tileW + scaleX);
 
-            int minY = MAX(0, -oy);
-            int maxY = tileH * scaleY + MIN(0, py);
+            int minX = MAX(0, -ox);
+            int maxX = tileW * scaleX + MIN(0, px);
 
             int tileIndex = tiles[tx + ty * srcCols];
 
             int tileX = (tileIndex % tilesPerRow) * tileW;
             int tileY = (tileIndex / tilesPerRow) * tileH;
 
-            for (int dx = minX; dx < maxX; ++dx) {
-                int sx = dstX + ox + dx;
-                int tmX = tileX + dx / scaleX;
-                for (int dy = minY; dy < maxY; ++dy) {
-                    int sy = dstY + oy + dy;
-                    int tmY = tileY + dy / scaleY;
+            for (int dy = minY; dy < maxY; ++dy) {
+                int sy = dstY + oy + dy;
+                int tmY = tileY + dy / scaleY;
 
+                for (int dx = minX; dx < maxX; ++dx) {
+                    int sx = dstX + ox + dx;
+                    int tmX = tileX + dx / scaleX;
+                    
                     uint8_t index = tilemap[tmX + tmY * tilesPerRow * tileW];
 
                     if (index != 0xff) {
