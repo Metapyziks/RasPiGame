@@ -46,8 +46,6 @@ int main(void)
 
         lcd_blitTilesPalette(tileset, palette, 16, 16, tilesetW / 16,
             tiles, x, y, 160, 160, 80, 60, 160, 120);
-
-        usleep(16000);
     } while (!lcd_buttonDown(BTN_1 | BTN_4));
 
     lcd_clear(CLR_BLACK);
