@@ -44,7 +44,7 @@ int main(void)
         if (lcd_buttonDown(BTN_3)) --x;
         if (lcd_buttonDown(BTN_4)) --y;
 
-        lcd_blitTilesPalette(tileset, palette, 16, 16, tilesetW / 16,
+        lcd_blitTilesPaletteScaled(tileset, palette, 16, 16, tilesetW / 16,
             tiles, x, y, 160, 160, 0, 0, 320, 240, 2, 2);
 
         usleep(8000);
