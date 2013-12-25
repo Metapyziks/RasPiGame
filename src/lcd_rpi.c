@@ -21,6 +21,19 @@ static long int lcd_screensize;
 static int lcd_fbfd;
 static uint16_t* lcd_fbp;
 
+static void (*curIdleFunc)(void) = NULL;
+static void (*curDisplayFunc)(void) = NULL;
+
+void lcd_idleFunc(void (*idleFunc)(void))
+{
+    curIdleFunc = idleFunc;
+}
+
+void lcd_displayFunc(void (*displayFunc)(void))
+{
+    curDisplayFunc = displayFunc;
+}
+
 int lcd_init(void)
 {
     lcd_fbfd = open("/dev/fb1", O_RDWR);
@@ -59,6 +72,14 @@ int lcd_init(void)
     system("setterm -cursor off");
 
     return TRUE;
+}
+
+void lcd_mainLoop(void)
+{
+    do {
+        curIdleFunc();
+        curDisplayFunc();
+    } while (!lcd_buttonDown(BTN_0 | BTN_3));
 }
 
 void lcd_stop(void)
