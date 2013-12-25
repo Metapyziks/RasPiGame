@@ -81,6 +81,8 @@ void lcd_swapBuffers(void)
     glRasterPos2i(-1, -1);
     glDrawPixels(DISPLAY_WIDTH, DISPLAY_HEIGHT, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, fb);
     glutSwapBuffers();
+
+    glutPostRedisplay();
 }
 
 #include "lcd.c"
