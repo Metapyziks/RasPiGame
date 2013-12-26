@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "utils.h"
+#include "map.h"
 
 #define DISPLAY_WIDTH 320
 #define DISPLAY_HEIGHT 240
@@ -54,15 +55,14 @@ void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
     int scaleX, int scaleY);
 
 void lcd_blitTilesPalette(uint8_t* tilemap, color_t* palette,
-    uint16_t* tiles, int tileW, int tileH,
-    int srcX, int srcY, int srcW, int srcH,
-    int dstX, int dstY, int dstW, int dstH);
+    struct map map, int tileW, int tileH,
+    int srcX, int srcY, int dstX, int dstY,
+    int dstW, int dstH);
 
 void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
-    uint16_t* tiles, int tileW, int tileH,
-    int srcX, int srcY, int srcW, int srcH,
-    int dstX, int dstY, int dstW, int dstH,
-    int scaleX, int scaleY);
+    struct map map, int tileW, int tileH,
+    int srcX, int srcY, int dstX, int dstY,
+    int dstW, int dstH, int scaleX, int scaleY);
 
 button_t lcd_getButtons(void);
 

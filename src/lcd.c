@@ -66,26 +66,20 @@ void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
 }
 
 void lcd_blitTilesPalette(uint8_t* tilemap, color_t* palette,
-    uint16_t* tiles, int tileW, int tileH,
-    int srcX, int srcY, int srcW, int srcH,
-    int dstX, int dstY, int dstW, int dstH)
+    struct map map, int tileW, int tileH,
+    int srcX, int srcY, int dstX, int dstY,
+    int dstW, int dstH)
 {
     lcd_blitTilesPaletteScaled(tilemap, palette,
-        tiles, tileW, tileH,
-        srcX, srcY, srcW, srcH,
-        dstX, dstY, dstW, dstH,
-        1, 1);
+        map, tileW, tileH, srcX, srcY, 
+        dstX, dstY, dstW, dstH, 1, 1);
 }
 
 void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
-    uint16_t* tiles, int tileW, int tileH,
-    int srcX, int srcY, int srcW, int srcH,
-    int dstX, int dstY, int dstW, int dstH,
-    int scaleX, int scaleY)
+    struct map map, int tileW, int tileH,
+    int srcX, int srcY, int dstX, int dstY,
+    int dstW, int dstH, int scaleX, int scaleY)
 {
-    int srcCols = srcW / tileW;
-    int srcRows = srcH / tileH;
-
     int minI = srcX;
     int minJ = srcY;
     int maxI = srcX + dstW / scaleX;
@@ -97,7 +91,7 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
     maxJ = CEIL(maxJ, tileH);
 
     for (int j = minJ; j < maxJ; ++j) {
-        int ty = WRAP(j, srcRows);
+        int ty = WRAP(j, map.height);
         int oy = ((j * tileH) - srcY) * scaleY;
         int py = dstH - (oy + tileH * scaleY);
 
@@ -105,14 +99,14 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
         int maxY = tileH * scaleY + MIN(0, py);
 
         for (int i = minI; i < maxI; ++i) {
-            int tx = WRAP(i, srcCols);
+            int tx = WRAP(i, map.width);
             int ox = ((i * tileW) - srcX) * scaleX;
             int px = dstW - (ox + tileW * scaleX);
 
             int minX = MAX(0, -ox);
             int maxX = tileW * scaleX + MIN(0, px);
 
-            int tileIndex = tiles[tx + ty * srcCols];
+            int tileIndex = map.tiles[tx + ty * map.width].id;
 
             int tileOffset = tileIndex * tileW * tileH;
 

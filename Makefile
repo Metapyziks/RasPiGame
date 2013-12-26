@@ -10,14 +10,17 @@ RPI-SRC = \
 HDR = \
 	$(SRCDIR)/utils.h \
 	$(SRCDIR)/lcd.h \
-	$(SRCDIR)/sprite.h
+	$(SRCDIR)/sprite.h \
+	$(SRCDIR)/map.h
 
 SRC = \
 	$(SRCDIR)/main.c \
-	$(SRCDIR)/sprite.c
+	$(SRCDIR)/sprite.c \
+	$(SRCDIR)/map.c
 
 AUX = \
-	$(SRCDIR)/lcd.c
+	$(SRCDIR)/lcd.c \
+	$(SRCDIR)/mapgen/forest.c
 
 CFLAGS = -std=c99 -O3 -Wall -Wcast-align -Wcast-qual -Wimplicit \
 	   -Wmissing-declarations -Wmissing-prototypes -Wnested-externs \

@@ -2,6 +2,7 @@
 
 #include "lcd.h"
 #include "sprite.h"
+#include "map.h"
 
 void idleFunc(void);
 void displayFunc(void);
@@ -12,6 +13,8 @@ static int cameraY = 8;
 static int tilesetW = 0;
 static int tilesetH = 0;
 static uint8_t* tileset = NULL;
+
+static struct map curMap = { 0, 0, NULL };
 
 void idleFunc(void)
 {
@@ -30,21 +33,8 @@ void displayFunc(void)
         CLR_FROM_RGB(0xf8, 0xf8, 0xf8),
     };
 
-    static uint16_t tiles[100] = {
-        226, 225, 226, 137,  17,  44,  44,  17, 137, 225,
-        256, 255, 256, 137,  17,  44,  44,  17, 137, 255,
-         17,  17,  17,  17,  17,  44,  44,  17,  17,  17,
-         17,  17,  17,  17,  17, 225, 226,  17,  17,  17,
-         44,  44,  44,  44,  44, 255, 256,  44,  44,  44,
-         44,  44,  44,  44,  44,  44,  44,  44,  44,  44,
-        226, 225, 226, 137,  44,  44,  44,  44, 137, 225,
-        256, 255, 256, 137,  44,  44,  44, 133, 137, 255,
-        226, 225, 226, 137,  44,  44,  44,  44, 137, 225,
-        256, 255, 256, 137,  17,  44,  44,  17, 137, 255,
-    };
-
-    lcd_blitTilesPaletteScaled(tileset, palette, tiles, tilesetW, tilesetH,
-        cameraX - 80, cameraY - 72, 160, 160, 80, 48, 160, 144, 1, 1);
+    lcd_blitTilesPaletteScaled(tileset, palette, curMap, tilesetW, tilesetH,
+        cameraX - 80, cameraY - 72, 80, 48, 160, 144, 1, 1);
 
     lcd_swapBuffers();
 }
@@ -53,6 +43,9 @@ int main(void)
 {
     int tiles = 0;
     tileset = sprite_fromFile("res/tileset.pic", &tilesetW, &tilesetH, &tiles);
+
+    curMap = map_new(64, 64);
+    map_genForest(curMap, 0, 0, 64, 64);
 
     lcd_init();
     lcd_clear(CLR_BLACK);
