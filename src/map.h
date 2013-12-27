@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define DEFAULT_TILE 0x000a
+
 #define TFLAG_NONE 0x00
 #define TFLAG_SOLID 0x01
 
@@ -21,6 +23,7 @@ struct map map_new(int width, int height);
 
 void map_setTile(struct map map, int x, int y, uint16_t id, uint8_t flags);
 struct tile map_getTile(struct map map, int x, int y);
+int map_hasTile(struct map map, int x, int y);
 
 void map_genForest(struct map map, int x, int y, int width, int height);
 

@@ -13,6 +13,11 @@ struct tile map_getTile(struct map map, int x, int y)
 	return map.tiles[x + y * map.height];
 }
 
+int map_hasTile(struct map map, int x, int y)
+{
+	return map.tiles[x + y * map.height].id != DEFAULT_TILE;
+}
+
 struct map map_new(int width, int height)
 {
 	struct map map = { width, height, NULL };
@@ -21,7 +26,7 @@ struct map map_new(int width, int height)
 
 	for (int x = 0; x < width; ++x)
 	for (int y = 0; y < height; ++y) {
-		map_setTile(map, x, y, 0x000a, TFLAG_NONE);
+		map_setTile(map, x, y, DEFAULT_TILE, TFLAG_NONE);
 	}
 
 	return map;

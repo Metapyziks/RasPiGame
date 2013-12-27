@@ -1,4 +1,6 @@
 #include <unistd.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "lcd.h"
 #include "sprite.h"
@@ -34,7 +36,7 @@ void displayFunc(void)
     };
 
     lcd_blitTilesPaletteScaled(tileset, palette, curMap, tilesetW, tilesetH,
-        cameraX - 80, cameraY - 72, 80, 48, 160, 144, 1, 1);
+        cameraX - 80, cameraY - 72, 0, 0, 320, 240, 1, 1);
 
     lcd_swapBuffers();
 }
@@ -43,6 +45,8 @@ int main(void)
 {
     int tiles = 0;
     tileset = sprite_fromFile("res/tileset.pic", &tilesetW, &tilesetH, &tiles);
+
+    srand(time(NULL));
 
     curMap = map_new(64, 64);
     map_genForest(curMap, 0, 0, 64, 64);
