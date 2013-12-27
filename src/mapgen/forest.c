@@ -25,9 +25,15 @@ static void placeBigTree(struct map map, int x, int y)
 
 static void placeGrass(struct map map, int x, int y, int width, int height)
 {
-	for (int r = y; r < y + height; ++r)
-	for (int c = x; c < x + width; ++c) {
+	for (int r = MAX(0, y - 1); r < MIN(map.height, y + height + 1); ++r)
+	for (int c = MAX(0, x - 1); c < MIN(map.width, x + width + 1); ++c) {
+		if (r == y - 1 || c == x - 1 || r == y + height || c == x + width) {
+			if ((r == y - 1 || r == y + height) == (c == x - 1 || c == x + width)) continue;
+			if ((rand() & 0x3) < 0x3) continue;
+		}
+
 		map_setTileFlags(map, c, r, TFLAG_NONE);
+
 		switch (rand() & 0x3) {
 			case 0x0:
 			case 0x1:
@@ -36,6 +42,10 @@ static void placeGrass(struct map map, int x, int y, int width, int height)
 				map_setTileBackground(map, c, r, 0x0069); break;
 			case 0x3:
 				map_setTileBackground(map, c, r, 0x006a); break;
+		}
+
+		if ((rand() & 0xff) < 0x7) {
+			map_setTileForeground(map, c, r, 0x00ec);
 		}
 	}
 }

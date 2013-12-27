@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "map.h"
+#include "utils.h"
 
 void map_clearTile(struct map map, int x, int y)
 {
