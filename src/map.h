@@ -3,13 +3,14 @@
 
 #include <stdint.h>
 
-#define DEFAULT_TILE 0x000a
+#define DEFAULT_TILE 0xffff
 
 #define TFLAG_NONE 0x00
 #define TFLAG_SOLID 0x01
 
 struct tile {
-	uint16_t id;
+	uint16_t back;
+	uint16_t fore;
 	uint8_t flags;
 };
 
@@ -21,9 +22,16 @@ struct map {
 
 struct map map_new(int width, int height);
 
-void map_setTile(struct map map, int x, int y, uint16_t id, uint8_t flags);
-struct tile map_getTile(struct map map, int x, int y);
-int map_hasTile(struct map map, int x, int y);
+void map_clearTile(struct map map, int x, int y);
+
+void map_setTileBackground(struct map map, int x, int y, uint16_t id);
+void map_setTileForeground(struct map map, int x, int y, uint16_t id);
+void map_setTileFlags(struct map map, int x, int y, uint8_t flags);
+uint16_t map_getTileBackground(struct map map, int x, int y);
+uint16_t map_getTileForeground(struct map map, int x, int y);
+uint8_t map_getTileFlags(struct map map, int x, int y);
+int map_hasTileBackground(struct map map, int x, int y);
+int map_hasTileForeground(struct map map, int x, int y);
 
 void map_genForest(struct map map, int x, int y, int width, int height);
 

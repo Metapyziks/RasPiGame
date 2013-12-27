@@ -106,9 +106,12 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
             int minX = MAX(0, -ox);
             int maxX = tileW * scaleX + MIN(0, px);
 
-            int tileIndex = map.tiles[tx + ty * map.width].id;
+            struct tile tile = map.tiles[tx + ty * map.width];
 
-            int tileOffset = tileIndex * tileW * tileH;
+            if (tile.back == DEFAULT_TILE) continue;
+
+            int bgOffset = tile.back * tileW * tileH;
+            int fgOffset = tile.fore * tileW * tileH;
 
             for (int dy = minY; dy < maxY; ++dy) {
                 int sy = dstY + oy + dy;
@@ -116,10 +119,15 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
                 for (int dx = minX; dx < maxX; ++dx) {
                     int sx = dstX + ox + dx;
 
-                    uint8_t index = tilemap[tileOffset + dx / scaleX + dy / scaleY * tileW];
+                    uint8_t bg = tilemap[bgOffset + dx / scaleX + dy / scaleY * tileW];
+                    uint8_t fg = tile.fore != DEFAULT_TILE
+                        ? tilemap[fgOffset + dx / scaleX + dy / scaleY * tileW]
+                        : 0xff;
 
-                    if (index != 0xff) {
-                        SET_PIXEL(sx, sy, palette[index]);
+                    if (fg != 0xff) {
+                        SET_PIXEL(sx, sy, palette[fg]);
+                    } else if (bg != 0xff) {
+                        SET_PIXEL(sx, sy, palette[bg]);
                     }
                 }
             }
