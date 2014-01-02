@@ -79,7 +79,7 @@ void lcd_mainLoop(void)
     do {
         curIdleFunc();
         curDisplayFunc();
-    } while (!lcd_buttonDown(BTN_1 | BTN_4));
+    } while (!lcd_buttonDown(BTN_1 | BTN_4) && !lcd_buttonDown(BTN_0));
 }
 
 void lcd_stop(void)
