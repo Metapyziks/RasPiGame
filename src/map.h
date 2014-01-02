@@ -34,5 +34,8 @@ int map_hasTileBackground(struct map map, int x, int y);
 int map_hasTileForeground(struct map map, int x, int y);
 
 void map_genForest(struct map map, int x, int y, int width, int height);
+void map_genDungeon(struct map map, int x, int y, int width, int height,
+    void (*hollowFunc)(struct map, int, int, int, int),
+    void (*solidFunc)(struct map, int, int, int, int));
 
 #endif

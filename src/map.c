@@ -54,7 +54,7 @@ struct map map_new(int width, int height)
 {
 	struct map map = { width, height, NULL };
 
-	map.tiles = (struct tile*) malloc(sizeof(struct tile) * width * height);
+	map.tiles = NEW(struct tile, width * height);
 
 	for (int x = 0; x < width; ++x)
 	for (int y = 0; y < height; ++y) {
@@ -63,5 +63,3 @@ struct map map_new(int width, int height)
 
 	return map;
 }
-
-#include "mapgen/forest.c"

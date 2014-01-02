@@ -9,8 +9,8 @@
 void idleFunc(void);
 void displayFunc(void);
 
-static int cameraX = 8;
-static int cameraY = 8;
+static int cameraX = 32 * 16;
+static int cameraY = 32 * 16;
 
 static int tilesetW = 0;
 static int tilesetH = 0;
@@ -36,7 +36,8 @@ void displayFunc(void)
     };
 
     lcd_blitTilesPaletteScaled(tileset, palette, curMap, tilesetW, tilesetH,
-        cameraX - 80, cameraY - 72, 0, 0, 320, 240, 1, 1);
+        cameraX - (DISPLAY_WIDTH >> 1), cameraY - (DISPLAY_HEIGHT >> 1),
+        0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, 1, 1);
 
     lcd_swapBuffers();
 }
@@ -48,8 +49,8 @@ int main(void)
 
     srand(time(NULL));
 
-    curMap = map_new(64, 64);
-    map_genForest(curMap, 0, 0, 64, 64);
+    curMap = map_new(96, 64);
+    map_genForest(curMap, 0, 0, 96, 64);
 
     lcd_init();
     lcd_clear(CLR_BLACK);

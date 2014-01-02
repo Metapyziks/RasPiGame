@@ -16,11 +16,12 @@ HDR = \
 SRC = \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/sprite.c \
-	$(SRCDIR)/map.c
+	$(SRCDIR)/map.c \
+	$(SRCDIR)/mapgen/forest.c \
+	$(SRCDIR)/mapgen/dungeon.c
 
 AUX = \
-	$(SRCDIR)/lcd.c \
-	$(SRCDIR)/mapgen/forest.c
+	$(SRCDIR)/lcd.c
 
 CFLAGS = -std=c99 -O3 -Wall -Wcast-align -Wcast-qual -Wimplicit \
 	   -Wmissing-declarations -Wmissing-prototypes -Wnested-externs \

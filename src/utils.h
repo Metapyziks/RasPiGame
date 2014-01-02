@@ -12,4 +12,6 @@
 #define FLOOR(x, y) (((x) >= 0 ? (x) : ((x) - ((y) - 1))) / (y))
 #define CEIL(x, y) (((x) >= 0 ? ((x) + (y) - 1) : (x)) / (y))
 
+#define NEW(t, c) ((t*) malloc(sizeof(t) * (c)))
+
 #endif

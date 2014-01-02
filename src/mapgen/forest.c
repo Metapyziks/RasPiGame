@@ -1,3 +1,8 @@
+#include <stdlib.h>
+
+#include "../map.h"
+#include "../utils.h"
+
 static void placeTree(struct map map, int x, int y)
 {
 	map_setTileBackground(map, x, y, 0x0088);
@@ -25,6 +30,8 @@ static void placeBigTree(struct map map, int x, int y)
 
 static void placeGrass(struct map map, int x, int y, int width, int height)
 {
+	int grass = rand() & 3;
+
 	for (int r = MAX(0, y - 1); r < MIN(map.height, y + height + 1); ++r)
 	for (int c = MAX(0, x - 1); c < MIN(map.width, x + width + 1); ++c) {
 		if (r == y - 1 || c == x - 1 || r == y + height || c == x + width) {
@@ -34,14 +41,18 @@ static void placeGrass(struct map map, int x, int y, int width, int height)
 
 		map_setTileFlags(map, c, r, TFLAG_NONE);
 
-		switch (rand() & 0x3) {
-			case 0x0:
-			case 0x1:
-				map_setTileBackground(map, c, r, 0x000f); break;
-			case 0x2:
-				map_setTileBackground(map, c, r, 0x0069); break;
-			case 0x3:
-				map_setTileBackground(map, c, r, 0x006a); break;
+		if ((rand() & 3) < grass) {
+			map_setTileBackground(map, c, r, 0x0010);
+		} else {
+			switch (rand() & 0x3) {
+				case 0x0:
+				case 0x1:
+					map_setTileBackground(map, c, r, 0x000f); break;
+				case 0x2:
+					map_setTileBackground(map, c, r, 0x0069); break;
+				case 0x3:
+					map_setTileBackground(map, c, r, 0x006a); break;
+			}
 		}
 
 		if ((rand() & 0xff) < 0x7) {
@@ -50,10 +61,8 @@ static void placeGrass(struct map map, int x, int y, int width, int height)
 	}
 }
 
-void map_genForest(struct map map, int x, int y, int width, int height)
+static void placeTrees(struct map map, int x, int y, int width, int height)
 {
-	placeGrass(map, 5, 4, width - 7, 4);
-
 	for (int r = y; r < y + height - 1; ++r)
 	for (int c = x; c < x + width - 1; ++c) {
 		if (map_hasTileBackground(map, c + 0, r + 0) ||
@@ -102,4 +111,9 @@ void map_genForest(struct map map, int x, int y, int width, int height)
 			}
 		}
 	}
+}
+
+void map_genForest(struct map map, int x, int y, int width, int height)
+{
+	map_genDungeon(map, x, y, width, height, placeGrass, placeTrees);
 }
