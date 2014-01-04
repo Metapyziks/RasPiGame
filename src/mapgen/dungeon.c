@@ -8,33 +8,45 @@
 
 #define MIN_DIV 8
 
+static int nextVertID = 0;
+
 struct vert
 {
-    int x, y, mark;
+    int x, y, mark, id;
     struct vert* t;
     struct vert* l;
     struct vert* b;
     struct vert* r;
 };
 
+static struct vert* vert_new(int x, int y)
+{
+    struct vert* v = NEW(struct vert, 1);
+
+    v->x = x;
+    v->y = y;
+    v->id = nextVertID++;
+    v->mark = 0;
+
+    v->t = NULL;
+    v->l = NULL;
+    v->b = NULL;
+    v->r = NULL;
+
+    return v;
+}
+
 static struct vert* quad(int x, int y, int w, int h)
 {
-    struct vert* tl = NEW(struct vert, 1);
-    struct vert* tr = NEW(struct vert, 1);
-    struct vert* bl = NEW(struct vert, 1);
-    struct vert* br = NEW(struct vert, 1);
+    struct vert* tl = vert_new(x, y);
+    struct vert* tr = vert_new(x + w, y);
+    struct vert* bl = vert_new(x, y + h);
+    struct vert* br = vert_new(x + w, y + h);
 
-    tl->mark = 0; tr->mark = 0; bl->mark = 0; br->mark = 0;
-
-    tl->x = x;     tl->y = y;
-    tr->x = x + w; tr->y = y;
-    bl->x = x;     bl->y = y + h;
-    br->x = x + w; br->y = y + h;
-
-    tl->t = NULL; tr->t = NULL; bl->t = tl;   br->t = tr;
-    tl->l = NULL; tr->l = tl;   bl->l = NULL; br->l = bl;
-    tl->b = bl;   tr->b = br;   bl->b = NULL; br->b = NULL;
-    tl->r = tr;   tr->r = NULL; bl->r = br;   br->r = NULL;
+    bl->t = tl; br->t = tr;
+    tr->l = tl; br->l = bl;
+    tl->b = bl; tr->b = br;
+    tl->r = tr; bl->r = br;
 
     return tl;
 }
@@ -86,10 +98,8 @@ static void subdivide(struct vert* tl)
         }
 
         if (a == NULL) {
-            a = NEW(struct vert, 1); a->mark = 0;
-            a->x = x0 + offset; a->y = y0;
+            a = vert_new(x0 + offset, y0);
 
-            a->t = NULL;
             a->l = tr;
             a->r = tl;
 
@@ -99,11 +109,9 @@ static void subdivide(struct vert* tl)
         }
 
         if (b == NULL) {
-            b = NEW(struct vert, 1); b->mark = 0;
-            b->x = x0 + offset; b->y = y1;
+            b = vert_new(x0 + offset, y1);
 
             b->l = br;
-            b->b = NULL;
             b->r = bl;
 
             while (b->l->x > b->x) b->l = b->l->l; while (b->r->x < b->x) b->r = b->r->r;
@@ -136,11 +144,9 @@ static void subdivide(struct vert* tl)
         }
 
         if (a == NULL) {
-            a = NEW(struct vert, 1); a->mark = 0;
-            a->x = x0; a->y = y0 + offset;
+            a = vert_new(x0, y0 + offset);
 
             a->t = bl;
-            a->l = NULL;
             a->b = tl;
 
             while (a->t->y > a->y) a->t = a->t->t; while (a->b->y < a->y) a->b = a->b->b;
@@ -149,12 +155,10 @@ static void subdivide(struct vert* tl)
         }
 
         if (b == NULL) {
-            b = NEW(struct vert, 1); b->mark = 0;
-            b->x = x1; b->y = y0 + offset;
+            b = vert_new(x1, y0 + offset);
 
             b->t = br;
             b->b = tr;
-            b->r = NULL;
 
             while (b->t->y > b->y) b->t = b->t->t; while (b->b->y < b->y) b->b = b->b->b;
 
@@ -166,6 +170,11 @@ static void subdivide(struct vert* tl)
 
         subdivide(tl); subdivide(a);
     }
+}
+
+static void cullPaths(struct map map, struct vert* v)
+{
+
 }
 
 static void carvePath(struct map map, struct vert* a, struct vert* b,
@@ -184,17 +193,17 @@ static void carvePath(struct map map, struct vert* a, struct vert* b,
 static void carveNetwork(struct map map, struct vert* v,
     void (*hollowFunc)(struct map, int, int, int, int))
 {
-    v->mark = 1;
+    v->mark = -1;
 
-    if (v->t != NULL && v->t->mark != 1) carvePath(map, v, v->t, hollowFunc);
-    if (v->l != NULL && v->l->mark != 1) carvePath(map, v, v->l, hollowFunc);
-    if (v->b != NULL && v->b->mark != 1) carvePath(map, v, v->b, hollowFunc);
-    if (v->r != NULL && v->r->mark != 1) carvePath(map, v, v->r, hollowFunc);
+    if (v->t != NULL && v->t->mark != -1) carvePath(map, v, v->t, hollowFunc);
+    if (v->l != NULL && v->l->mark != -1) carvePath(map, v, v->l, hollowFunc);
+    if (v->b != NULL && v->b->mark != -1) carvePath(map, v, v->b, hollowFunc);
+    if (v->r != NULL && v->r->mark != -1) carvePath(map, v, v->r, hollowFunc);
 
-    if (v->t != NULL && v->t->mark != 1) carveNetwork(map, v->t, hollowFunc);
-    if (v->l != NULL && v->l->mark != 1) carveNetwork(map, v->l, hollowFunc);
-    if (v->b != NULL && v->b->mark != 1) carveNetwork(map, v->b, hollowFunc);
-    if (v->r != NULL && v->r->mark != 1) carveNetwork(map, v->r, hollowFunc);
+    if (v->t != NULL && v->t->mark != -1) carveNetwork(map, v->t, hollowFunc);
+    if (v->l != NULL && v->l->mark != -1) carveNetwork(map, v->l, hollowFunc);
+    if (v->b != NULL && v->b->mark != -1) carveNetwork(map, v->b, hollowFunc);
+    if (v->r != NULL && v->r->mark != -1) carveNetwork(map, v->r, hollowFunc);
 }
 
 static void freeVerts(struct vert* v)
