@@ -9,8 +9,11 @@
 void idleFunc(void);
 void displayFunc(void);
 
-static int cameraX = 32 * 16;
-static int cameraY = 32 * 16;
+#define MAP_WIDTH 96
+#define MAP_HEIGHT 64
+
+static int cameraX = MAP_WIDTH / 2 * 16;
+static int cameraY = MAP_HEIGHT / 2 * 16;
 
 static int tilesetW = 0;
 static int tilesetH = 0;
@@ -49,8 +52,8 @@ int main(void)
 
     srand(time(NULL));
 
-    curMap = map_new(96, 64);
-    map_genForest(curMap, 0, 0, 96, 64);
+    curMap = map_new(MAP_WIDTH, MAP_HEIGHT);
+    map_genForest(curMap, 0, 0, MAP_WIDTH, MAP_HEIGHT);
 
     lcd_init();
     lcd_clear(CLR_BLACK);
