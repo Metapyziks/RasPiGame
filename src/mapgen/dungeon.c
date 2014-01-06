@@ -386,7 +386,7 @@ void map_genDungeon(struct map map, int x, int y, int w, int h,
     struct vert* tl = quad(x + 8, y + 8, w - 16, h - 16);
 
     subdivide(tl);
-    //cullPaths(tl);
+    cullPaths(tl);
     carveNetwork(map, tl, hollowFunc);
     solidFunc(map, x, y, w, h);
 
