@@ -28,31 +28,31 @@ struct path
     struct vert* b;
 };
 
+static int getDir(struct vert* a, struct vert* b)
+{
+    return a->y > b->y ? DIR_T
+        : a->x > b->x ? DIR_L
+        : a->y < b->y ? DIR_B
+        : a->x < b->x ? DIR_R
+        : -1;
+}
+
 static int joinVerts(struct vert* a, struct vert* b)
 {
     if ((a->x != b->x) == (a->y != b->y)) return FALSE;
 
-    int dir = a->y > b->y ? DIR_T
-            : a->x > b->x ? DIR_L
-            : a->y < b->y ? DIR_B
-            : DIR_R;
+    int dir = getDir(a, b);
 
-    struct vert* prev = ADJ(b, dir ^ 2);
-    if (prev != NULL) {
-        if ((dir == DIR_T && prev->y < a->y) ||
-            (dir == DIR_L && prev->x < a->x) ||
-            (dir == DIR_B && prev->y > a->y) ||
-            (dir == DIR_R && prev->x > a->x)) {
-            return joinVerts(a, prev);
-        } else if ((prev->x != a->x) != (prev->y != a->y)) {
-            printf("- (%i, %i) \t(%i, %i)\n", prev->x, prev->y, a->x, a->y);
-            ADJ(prev, dir) = NULL;
-        } else {
-            return FALSE;
-        }
+    while (ADJ(b, dir ^ 2) != NULL && getDir(a, ADJ(b, dir ^ 2)) == dir) {
+        b = ADJ(b, dir ^ 2);
     }
 
-    printf("+ (%i, %i) \t(%i, %i)\n", a->x, a->y, b->x, b->y);
+    if (a == b) return FALSE;
+
+    if (ADJ(b, dir ^ 2) != NULL) {
+        ADJ(ADJ(b, dir ^ 2), dir) = NULL;
+    }
+
     ADJ(a, dir) = b; ADJ(b, dir ^ 2) = a;
 
     return TRUE;
@@ -60,15 +60,17 @@ static int joinVerts(struct vert* a, struct vert* b)
 
 static struct vert* findVert(struct vert* v, int dir, int pos)
 {
-    if (v == NULL) return NULL;
-
     if (dir & 1) {
-        if (v->x == pos) return v;
-        if ( (dir & 2) && v->x > pos) return NULL;
+        if (v->x == pos) {
+            return v;
+        }
+        if ((dir & 2) && v->x > pos) return NULL;
         if (!(dir & 2) && v->x < pos) return NULL;
     } else {
-        if (v->y == pos) return v;
-        if ( (dir & 2) && v->y > pos) return NULL;
+        if (v->y == pos) {
+            return v;
+        }
+        if ((dir & 2) && v->y > pos) return NULL;
         if (!(dir & 2) && v->y < pos) return NULL;
     }
 
@@ -114,7 +116,7 @@ static void subdivide(struct vert* tl)
 
     // The top-right / bottom-left may not be the first adjacent verts.
     while (ADJ(tr, DIR_B) == NULL) tr = ADJ(tr, DIR_R);
-    while (ADJ(tl, DIR_R) == NULL) bl = ADJ(bl, DIR_B);
+    while (ADJ(bl, DIR_R) == NULL) bl = ADJ(bl, DIR_B);
 
     // Bottom right should always be the vert below the top right.
     struct vert* br = ADJ(tr, DIR_B);
@@ -128,7 +130,7 @@ static void subdivide(struct vert* tl)
     // Size of the quad.
     int w = x1 - x0;
     int h = y1 - y0;
-    
+
     int offset;
 
     struct vert* a = NULL;
@@ -182,8 +184,8 @@ static void subdivide(struct vert* tl)
         if (a == NULL) {
             a = vert_new(x0, y0 + offset);
 
-            joinVerts(a, bl);
             joinVerts(a, tl);
+            joinVerts(a, bl);
         }
 
         // If no vert on the right column exists along the
@@ -191,8 +193,8 @@ static void subdivide(struct vert* tl)
         if (b == NULL) {
             b = vert_new(x1, y0 + offset);
 
-            joinVerts(b, br);
             joinVerts(b, tr);
+            joinVerts(b, br);
         }
     }
 
@@ -207,7 +209,7 @@ static void fillVertsArray(struct vert** verts, struct vert* v)
 {
     verts[v->id] = v;
 
-    for (int i = 0; i < 4; ++ i) {
+    for (int i = 0; i < 4; ++i) {
         struct vert* next = ADJ(v, i);
         if (next != NULL && verts[next->id] == NULL) fillVertsArray(verts, next);
     }
@@ -217,7 +219,7 @@ static struct vert** findVerts(struct vert* v)
 {
     struct vert** verts = NEW(struct vert*, vertCount);
 
-    for (int i = 0; i < vertCount; ++ i) verts[i] = NULL;
+    for (int i = 0; i < vertCount; ++i) verts[i] = NULL;
 
     fillVertsArray(verts, v);
 
@@ -240,7 +242,7 @@ static void addPathToArray(struct path* paths, struct vert* a, struct vert* b)
     }
 
     paths[i].a = a; paths[i].b = b;
-    
+
     fillPathsArray(paths, next);
 }
 
@@ -256,7 +258,7 @@ static struct path* findPaths(struct vert** verts)
 {
     struct path* paths = NEW(struct path, vertCount * 4);
 
-    for (int i = 0; i < vertCount * 4; ++ i) {
+    for (int i = 0; i < vertCount * 4; ++i) {
         paths[i].a = NULL; paths[i].b = NULL;
     }
 
@@ -325,7 +327,8 @@ static void cullPaths(struct vert* v)
         if (path.b->mark != path.a->mark) {
             floodNetwork(path.b, path.a->mark);
             joinVerts(path.a, path.b);
-        } else {
+        }
+        else {
             pathCount--;
         }
     }
@@ -337,7 +340,7 @@ static void cullPaths(struct vert* v)
 }
 
 static void carvePath(struct map map, struct vert* a, struct vert* b,
-    void (*hollowFunc)(struct map, int, int, int, int))
+    void(*hollowFunc)(struct map, int, int, int, int))
 {
     int size = 2 + (rand() & 1) * 2;
 
@@ -350,7 +353,7 @@ static void carvePath(struct map map, struct vert* a, struct vert* b,
 }
 
 static void carveNetwork(struct map map, struct vert* v,
-    void (*hollowFunc)(struct map, int, int, int, int))
+    void(*hollowFunc)(struct map, int, int, int, int))
 {
     v->mark = CARVE_MARK;
 
@@ -377,8 +380,8 @@ static void freeVerts(struct vert* v)
 }
 
 void map_genDungeon(struct map map, int x, int y, int w, int h,
-    void (*hollowFunc)(struct map, int, int, int, int),
-    void (*solidFunc)(struct map, int, int, int, int))
+    void(*hollowFunc)(struct map, int, int, int, int),
+    void(*solidFunc)(struct map, int, int, int, int))
 {
     struct vert* tl = quad(x + 8, y + 8, w - 16, h - 16);
 
