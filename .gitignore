@@ -19,3 +19,8 @@
 
 # Binaries directory
 bin/*
+Debug/*
+Release/*
+
+*.vcxproj
+*.filters
