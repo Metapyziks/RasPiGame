@@ -7,6 +7,7 @@
 
 #define CARVE_MARK -1
 
+#define DIR_NONE -1
 #define DIR_T 0
 #define DIR_L 1
 #define DIR_B 2
@@ -30,18 +31,20 @@ struct path
 
 static int getDir(struct vert* a, struct vert* b)
 {
+    if ((a->x != b->x) == (a->y != b->y)) return DIR_NONE;
+
     return a->y > b->y ? DIR_T
         : a->x > b->x ? DIR_L
         : a->y < b->y ? DIR_B
         : a->x < b->x ? DIR_R
-        : -1;
+        : DIR_NONE;
 }
 
 static int joinVerts(struct vert* a, struct vert* b)
 {
-    if ((a->x != b->x) == (a->y != b->y)) return FALSE;
-
     int dir = getDir(a, b);
+
+    if (dir == DIR_NONE) return FALSE;
 
     while (ADJ(b, dir ^ 2) != NULL && getDir(a, ADJ(b, dir ^ 2)) == dir) {
         b = ADJ(b, dir ^ 2);
@@ -230,20 +233,15 @@ static void fillPathsArray(struct path* paths, struct vert* v);
 
 static void addPathToArray(struct path* paths, struct vert* a, struct vert* b)
 {
-    struct vert* next = b;
-
-    if (b->id < a->id) {
-        b = a; a = next;
-    }
-
     int i;
     for (i = 0; i < vertCount * 4 && paths[i].a != NULL; ++i) {
         if (paths[i].a == a && paths[i].b == b) return;
     }
 
-    paths[i].a = a; paths[i].b = b;
+    paths[i].a = a; paths[i + 1].a = b;
+    paths[i].b = b; paths[i + 1].b = a;
 
-    fillPathsArray(paths, next);
+    fillPathsArray(paths, b);
 }
 
 static void fillPathsArray(struct path* paths, struct vert* v)
@@ -278,9 +276,8 @@ static void removePath(struct path* paths, struct path path)
     for (int i = 0; i < 4; ++i) {
         if (ADJ(path.a, i) == path.b) {
             ADJ(path.a, i) = NULL;
-            ADJ(path.b, i ^ 2) = NULL;
             break;
-        }
+        } else if (i == 3) return;
     }
 
     int found = FALSE;
@@ -289,6 +286,21 @@ static void removePath(struct path* paths, struct path path)
         if (found) paths[i] = paths[i + 1];
         if (paths[i].a == NULL) break;
     }
+
+    /*
+    if (getDir(path.a, path.b) == DIR_T) {
+        struct path back;
+        back.a = path.b;
+        back.b = path.a;
+
+        removePath(paths, back);
+    }
+    */
+}
+
+static void restorePath(struct vert* a, struct vert* b)
+{
+    ADJ(a, getDir(a, b)) = b;
 }
 
 static void markNetwork(struct vert** verts, int value)
@@ -313,23 +325,28 @@ static void cullPaths(struct vert* v)
 
     int pathCount = countPaths(paths);
     int currCount = pathCount;
-    int destCount = vertCount;
-
-    markNetwork(verts, 0);
+    int destCount = vertCount * 2;
 
     while (pathCount > destCount && currCount > 0) {
         int index = rand() % currCount--;
         struct path path = paths[index];
 
         removePath(paths, path);
-        floodNetwork(path.a, 1 - path.a->mark);
+        markNetwork(verts, 0);
+        floodNetwork(path.a, 1);
 
-        if (path.b->mark != path.a->mark) {
-            floodNetwork(path.b, path.a->mark);
-            joinVerts(path.a, path.b);
+        int valid = path.b->mark == path.a->mark;
+
+        if (valid) {
+            markNetwork(verts, 0);
+            floodNetwork(path.b, 1);
+            valid = path.b->mark == path.a->mark;
         }
-        else {
+
+        if (valid) {
             pathCount--;
+        } else {
+            restorePath(path.a, path.b);
         }
     }
 
@@ -350,6 +367,19 @@ static void carvePath(struct map map, struct vert* a, struct vert* b,
     int y1 = MAX(a->y, b->y) + size / 2;
 
     hollowFunc(map, x0, y0, x1 - x0, y1 - y0);
+
+    if (ADJ(b, getDir(b, a)) == NULL) {
+        switch (getDir(a, b)) {
+            case DIR_T:
+                map_setTileBackground(map, (x0 + x1) / 2, (y0 + y1) / 2, 0x00a6); break;
+            case DIR_L:
+                map_setTileBackground(map, (x0 + x1) / 2, (y0 + y1) / 2, 0x00c4); break;
+            case DIR_B:
+                map_setTileBackground(map, (x0 + x1) / 2, (y0 + y1) / 2, 0x00a7); break;
+            case DIR_R:
+                map_setTileBackground(map, (x0 + x1) / 2, (y0 + y1) / 2, 0x00c5); break;
+        }
+    }
 }
 
 static void carveNetwork(struct map map, struct vert* v,
