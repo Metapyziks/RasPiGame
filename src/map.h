@@ -15,15 +15,15 @@
 #define DIR_R 3
 
 struct tile {
-	uint16_t back;
-	uint16_t fore;
-	uint8_t flags;
+    uint16_t back;
+    uint16_t fore;
+    uint8_t flags;
 };
 
 struct map {
-	int width;
-	int height;
-	struct tile* tiles;
+    int width;
+    int height;
+    struct tile* tiles;
 };
 
 struct map map_new(int width, int height);
@@ -41,7 +41,7 @@ int map_hasTileForeground(struct map map, int x, int y);
 
 void map_genForest(struct map map, int x, int y, int width, int height);
 void map_genDungeon(struct map map, int x, int y, int width, int height,
-    void (*hollowFunc)(struct map, int, int, int, int, int),
-    void (*solidFunc)(struct map, int, int, int, int));
+    void(*hollowFunc)(struct map, int, int, int, int, int),
+    void(*solidFunc)(struct map, int, int, int, int));
 
 #endif

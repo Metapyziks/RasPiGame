@@ -170,7 +170,7 @@ static void subdivide(struct vert* tl)
             joinVerts(b, br);
         }
 
-    // Otherwise, subdivide horizontally.
+        // Otherwise, subdivide horizontally.
     } else {
 
         // Choose where to subdivide.
@@ -290,22 +290,22 @@ static int removePath(struct path* paths, struct vert* a, struct vert* b)
         if (paths[i].a == NULL) break;
     }
 
-	if (!found) return 0;
+    if (!found) return 0;
 
-	if (pathMustBeUndirected(b, a)) {
-		ADJ(b, getDir(b, a)) = NULL;
-	}
+    if (pathMustBeUndirected(b, a)) {
+        ADJ(b, getDir(b, a)) = NULL;
+    }
 
-	return 1;
+    return 1;
 }
 
 static void restorePath(struct vert* a, struct vert* b, int wasDirected)
 {
     ADJ(a, getDir(a, b)) = b;
 
-	if (pathMustBeUndirected(a, b) || wasDirected) {
+    if (pathMustBeUndirected(a, b) || wasDirected) {
         ADJ(b, getDir(b, a)) = a;
-	}
+    }
 }
 
 static void markNetwork(struct vert** verts, int value)
@@ -336,8 +336,8 @@ static void cullPaths(struct vert* v)
         int index = rand() % currCount;
         struct path path = paths[index];
 
-		int wasDirected = ADJ(path.b, getDir(path.b, path.a)) == path.a;
-		int removed = removePath(paths, path.a, path.b);
+        int wasDirected = ADJ(path.b, getDir(path.b, path.a)) == path.a;
+        int removed = removePath(paths, path.a, path.b);
         markNetwork(verts, 0);
         floodNetwork(path.a, 1);
 
@@ -346,12 +346,12 @@ static void cullPaths(struct vert* v)
             floodNetwork(path.b, 1);
         }
 
-		currCount -= removed;
+        currCount -= removed;
 
         if (path.b->mark == path.a->mark) {
-			pathCount -= removed;
+            pathCount -= removed;
         } else {
-			restorePath(path.a, path.b, wasDirected);
+            restorePath(path.a, path.b, wasDirected);
         }
     }
 
@@ -371,7 +371,7 @@ static void carvePath(struct map map, struct vert* a, struct vert* b,
     int x1 = MAX(a->x, b->x) + size / 2;
     int y1 = MAX(a->y, b->y) + size / 2;
 
-	hollowFunc(map, x0, y0, x1 - x0, y1 - y0, ADJ(b, getDir(b, a)) == NULL ? getDir(a, b) : DIR_NONE);
+    hollowFunc(map, x0, y0, x1 - x0, y1 - y0, ADJ(b, getDir(b, a)) == NULL ? getDir(a, b) : DIR_NONE);
 }
 
 static void carveNetwork(struct map map, struct vert* v,
