@@ -24,3 +24,4 @@ Release/*
 
 *.vcxproj
 *.filters
+*.user

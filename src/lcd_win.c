@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <Windows.h>
 
 #include <GL/gl.h>
 #include <GL/glext.h>
