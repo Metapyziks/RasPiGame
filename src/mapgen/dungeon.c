@@ -40,6 +40,11 @@ static int getDir(struct vert* a, struct vert* b)
         : DIR_NONE;
 }
 
+static int getDist(struct vert* a, struct vert* b)
+{
+    return ABS(b->x - a->x) + ABS(b->y - a->y);
+}
+
 static int joinVerts(struct vert* a, struct vert* b)
 {
     int dir = getDir(a, b);
@@ -271,36 +276,38 @@ static int countPaths(struct path* paths) {
     return count;
 }
 
-static void removePath(struct path* paths, struct path path)
+static int pathMustBeUndirected(struct vert* a, struct vert* b)
 {
-    for (int i = 0; i < 4; ++i) {
-        if (ADJ(path.a, i) == path.b) {
-            ADJ(path.a, i) = NULL;
-            break;
-        } else if (i == 3) return;
-    }
+    return getDir(a, b) == DIR_T || getDist(a, b) <= 4;
+}
+
+static void removePath(struct path* paths, struct vert* a, struct vert* b)
+{
+    int dir = getDir(a, b);
+
+    if (ADJ(a, dir) == b) {
+        ADJ(a, dir) = NULL;
+    } else return;
 
     int found = FALSE;
     for (int i = 0; i < vertCount * 4; ++i) {
-        if (!found && paths[i].a == path.a && paths[i].b == path.b) found = TRUE;
+        if (!found && paths[i].a == a && paths[i].b == b) found = TRUE;
         if (found) paths[i] = paths[i + 1];
         if (paths[i].a == NULL) break;
     }
 
-    /*
-    if (getDir(path.a, path.b) == DIR_T) {
-        struct path back;
-        back.a = path.b;
-        back.b = path.a;
-
-        removePath(paths, back);
+    if (pathMustBeUndirected(a, b)) {
+        removePath(paths, b, a);
     }
-    */
 }
 
 static void restorePath(struct vert* a, struct vert* b)
 {
     ADJ(a, getDir(a, b)) = b;
+
+    if (pathMustBeUndirected(a, b)) {
+        ADJ(b, getDir(b, a)) = a;
+    }
 }
 
 static void markNetwork(struct vert** verts, int value)
@@ -331,19 +338,16 @@ static void cullPaths(struct vert* v)
         int index = rand() % currCount--;
         struct path path = paths[index];
 
-        removePath(paths, path);
+        removePath(paths, path.a, path.b);
         markNetwork(verts, 0);
         floodNetwork(path.a, 1);
 
-        int valid = path.b->mark == path.a->mark;
-
-        if (valid) {
+        if (path.b->mark == path.a->mark) {
             markNetwork(verts, 0);
             floodNetwork(path.b, 1);
-            valid = path.b->mark == path.a->mark;
         }
 
-        if (valid) {
+        if (path.b->mark == path.a->mark) {
             pathCount--;
         } else {
             restorePath(path.a, path.b);
@@ -389,12 +393,16 @@ static void carveNetwork(struct map map, struct vert* v,
 
     for (int i = 0; i < 4; ++i) {
         struct vert* next = ADJ(v, i);
-        if (next != NULL && next->mark != CARVE_MARK) carvePath(map, v, next, hollowFunc);
+        if (next != NULL && (next->mark != CARVE_MARK || ADJ(next, getDir(next, v)) != v)) {
+            carvePath(map, v, next, hollowFunc);
+        }
     }
 
     for (int i = 0; i < 4; ++i) {
         struct vert* next = ADJ(v, i);
-        if (next != NULL && next->mark != CARVE_MARK) carveNetwork(map, next, hollowFunc);
+        if (next != NULL && next->mark != CARVE_MARK) {
+            carveNetwork(map, next, hollowFunc);
+        }
     }
 }
 
