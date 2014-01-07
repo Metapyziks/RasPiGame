@@ -7,12 +7,6 @@
 
 #define CARVE_MARK -1
 
-#define DIR_NONE -1
-#define DIR_T 0
-#define DIR_L 1
-#define DIR_B 2
-#define DIR_R 3
-
 #define ADJ(v, d) ((v)->paths[(d)])
 
 static int vertCount = 0;
@@ -278,16 +272,16 @@ static int countPaths(struct path* paths) {
 
 static int pathMustBeUndirected(struct vert* a, struct vert* b)
 {
-    return getDir(a, b) == DIR_T || getDist(a, b) <= 4;
+    return getDir(a, b) == DIR_B || getDist(a, b) <= 2;
 }
 
-static void removePath(struct path* paths, struct vert* a, struct vert* b)
+static int removePath(struct path* paths, struct vert* a, struct vert* b)
 {
     int dir = getDir(a, b);
 
     if (ADJ(a, dir) == b) {
         ADJ(a, dir) = NULL;
-    } else return;
+    } else return 0;
 
     int found = FALSE;
     for (int i = 0; i < vertCount * 4; ++i) {
@@ -297,8 +291,10 @@ static void removePath(struct path* paths, struct vert* a, struct vert* b)
     }
 
     if (pathMustBeUndirected(a, b)) {
-        removePath(paths, b, a);
-    }
+        return 1 + removePath(paths, b, a);
+	} else {
+		return 1;
+	}
 }
 
 static void restorePath(struct vert* a, struct vert* b)
@@ -335,10 +331,10 @@ static void cullPaths(struct vert* v)
     int destCount = vertCount * 2;
 
     while (pathCount > destCount && currCount > 0) {
-        int index = rand() % currCount--;
+        int index = rand() % currCount;
         struct path path = paths[index];
 
-        removePath(paths, path.a, path.b);
+		int removed = removePath(paths, path.a, path.b);
         markNetwork(verts, 0);
         floodNetwork(path.a, 1);
 
@@ -347,8 +343,10 @@ static void cullPaths(struct vert* v)
             floodNetwork(path.b, 1);
         }
 
+		currCount -= removed;
+
         if (path.b->mark == path.a->mark) {
-            pathCount--;
+			pathCount -= removed;
         } else {
             restorePath(path.a, path.b);
         }
@@ -361,7 +359,7 @@ static void cullPaths(struct vert* v)
 }
 
 static void carvePath(struct map map, struct vert* a, struct vert* b,
-    void(*hollowFunc)(struct map, int, int, int, int))
+    void(*hollowFunc)(struct map, int, int, int, int, int))
 {
     int size = 2 + (rand() & 1) * 2;
 
@@ -370,24 +368,11 @@ static void carvePath(struct map map, struct vert* a, struct vert* b,
     int x1 = MAX(a->x, b->x) + size / 2;
     int y1 = MAX(a->y, b->y) + size / 2;
 
-    hollowFunc(map, x0, y0, x1 - x0, y1 - y0);
-
-    if (ADJ(b, getDir(b, a)) == NULL) {
-        switch (getDir(a, b)) {
-            case DIR_T:
-                map_setTileBackground(map, (x0 + x1) / 2, (y0 + y1) / 2, 0x00a6); break;
-            case DIR_L:
-                map_setTileBackground(map, (x0 + x1) / 2, (y0 + y1) / 2, 0x00c4); break;
-            case DIR_B:
-                map_setTileBackground(map, (x0 + x1) / 2, (y0 + y1) / 2, 0x00a7); break;
-            case DIR_R:
-                map_setTileBackground(map, (x0 + x1) / 2, (y0 + y1) / 2, 0x00c5); break;
-        }
-    }
+	hollowFunc(map, x0, y0, x1 - x0, y1 - y0, ADJ(b, getDir(b, a)) == NULL ? getDir(a, b) : DIR_NONE);
 }
 
 static void carveNetwork(struct map map, struct vert* v,
-    void(*hollowFunc)(struct map, int, int, int, int))
+    void(*hollowFunc)(struct map, int, int, int, int, int))
 {
     v->mark = CARVE_MARK;
 
@@ -418,7 +403,7 @@ static void freeVerts(struct vert* v)
 }
 
 void map_genDungeon(struct map map, int x, int y, int w, int h,
-    void(*hollowFunc)(struct map, int, int, int, int),
+    void(*hollowFunc)(struct map, int, int, int, int, int),
     void(*solidFunc)(struct map, int, int, int, int))
 {
     struct vert* tl = quad(x + 8, y + 8, w - 16, h - 16);

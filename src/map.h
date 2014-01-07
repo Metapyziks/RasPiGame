@@ -8,6 +8,12 @@
 #define TFLAG_NONE 0x00
 #define TFLAG_SOLID 0x01
 
+#define DIR_NONE -1
+#define DIR_T 0
+#define DIR_L 1
+#define DIR_B 2
+#define DIR_R 3
+
 struct tile {
 	uint16_t back;
 	uint16_t fore;
@@ -35,7 +41,7 @@ int map_hasTileForeground(struct map map, int x, int y);
 
 void map_genForest(struct map map, int x, int y, int width, int height);
 void map_genDungeon(struct map map, int x, int y, int width, int height,
-    void (*hollowFunc)(struct map, int, int, int, int),
+    void (*hollowFunc)(struct map, int, int, int, int, int),
     void (*solidFunc)(struct map, int, int, int, int));
 
 #endif

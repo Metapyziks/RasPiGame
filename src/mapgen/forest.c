@@ -28,20 +28,41 @@ static void placeBigTree(struct map map, int x, int y)
 	map_setTileFlags(map, x + 1, y + 1, TFLAG_SOLID);
 }
 
-static void placeGrass(struct map map, int x, int y, int width, int height)
+static void placeGrass(struct map map, int x, int y, int width, int height, int dir)
 {
 	int grass = rand() & 3;
 
 	for (int r = MAX(0, y - 1); r < MIN(map.height, y + height + 1); ++r)
 	for (int c = MAX(0, x - 1); c < MIN(map.width, x + width + 1); ++c) {
+		if (map_getTileFlags(map, c, r) != TFLAG_NONE) continue;
+
+		int isHedge = ((dir == DIR_L || dir == DIR_R) && c == x + width / 2)
+			|| (dir == DIR_B && r == y + height / 2);
+
 		if (r == y - 1 || c == x - 1 || r == y + height || c == x + width) {
 			if ((r == y - 1 || r == y + height) == (c == x - 1 || c == x + width)) continue;
+			if (isHedge) { placeTree(map, c, r); continue; }
 			if ((rand() & 0x3) < 0x3) continue;
 		}
 
 		map_setTileFlags(map, c, r, TFLAG_NONE);
 
-		if ((rand() & 3) < grass) {
+		if ((rand() & 0xff) < 0x7) {
+			map_setTileForeground(map, c, r, 0x00ec);
+		}
+
+		if (isHedge) {
+			map_setTileBackground(map, c, r, 0x000f);
+
+			switch (dir) {
+				case DIR_L:
+					map_setTileForeground(map, c, r, 0x17a); break;
+				case DIR_B:
+					map_setTileForeground(map, c, r, 0x199); break;
+				case DIR_R:
+					map_setTileForeground(map, c, r, 0x17c); break;
+			}
+		} else if ((rand() & 3) < grass) {
 			map_setTileBackground(map, c, r, 0x0010);
 		} else {
 			switch (rand() & 0x3) {
@@ -53,10 +74,6 @@ static void placeGrass(struct map map, int x, int y, int width, int height)
 				case 0x3:
 					map_setTileBackground(map, c, r, 0x006a); break;
 			}
-		}
-
-		if ((rand() & 0xff) < 0x7) {
-			map_setTileForeground(map, c, r, 0x00ec);
 		}
 	}
 }
