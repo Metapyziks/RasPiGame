@@ -272,7 +272,7 @@ static int countPaths(struct path* paths) {
 
 static int pathMustBeUndirected(struct vert* a, struct vert* b)
 {
-    return getDir(a, b) == DIR_B || getDist(a, b) <= 2;
+    return getDir(a, b) != DIR_B || getDist(a, b) < 4;
 }
 
 static int removePath(struct path* paths, struct vert* a, struct vert* b)
@@ -281,7 +281,7 @@ static int removePath(struct path* paths, struct vert* a, struct vert* b)
 
     if (ADJ(a, dir) == b) {
         ADJ(a, dir) = NULL;
-    } else return 0;
+    }
 
     int found = FALSE;
     for (int i = 0; i < vertCount * 4; ++i) {
@@ -290,20 +290,22 @@ static int removePath(struct path* paths, struct vert* a, struct vert* b)
         if (paths[i].a == NULL) break;
     }
 
-    if (pathMustBeUndirected(a, b)) {
-        return 1 + removePath(paths, b, a);
-	} else {
-		return 1;
+	if (!found) return 0;
+
+	if (pathMustBeUndirected(b, a)) {
+		ADJ(b, getDir(b, a)) = NULL;
 	}
+
+	return 1;
 }
 
-static void restorePath(struct vert* a, struct vert* b)
+static void restorePath(struct vert* a, struct vert* b, int wasDirected)
 {
     ADJ(a, getDir(a, b)) = b;
 
-    if (pathMustBeUndirected(a, b)) {
+	if (pathMustBeUndirected(a, b) || wasDirected) {
         ADJ(b, getDir(b, a)) = a;
-    }
+	}
 }
 
 static void markNetwork(struct vert** verts, int value)
@@ -328,12 +330,13 @@ static void cullPaths(struct vert* v)
 
     int pathCount = countPaths(paths);
     int currCount = pathCount;
-    int destCount = vertCount * 2;
+    int destCount = 0;
 
     while (pathCount > destCount && currCount > 0) {
         int index = rand() % currCount;
         struct path path = paths[index];
 
+		int wasDirected = ADJ(path.b, getDir(path.b, path.a)) == path.a;
 		int removed = removePath(paths, path.a, path.b);
         markNetwork(verts, 0);
         floodNetwork(path.a, 1);
@@ -348,7 +351,7 @@ static void cullPaths(struct vert* v)
         if (path.b->mark == path.a->mark) {
 			pathCount -= removed;
         } else {
-            restorePath(path.a, path.b);
+			restorePath(path.a, path.b, wasDirected);
         }
     }
 
