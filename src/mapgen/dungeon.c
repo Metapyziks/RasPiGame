@@ -4,6 +4,7 @@
 #include "../utils.h"
 
 #define MIN_DIV 8
+#define MARGIN 8
 
 #define CARVE_MARK -1
 
@@ -361,15 +362,16 @@ static void cullPaths(struct vert* v)
     free(paths);
 }
 
-static void carvePath(struct map map, struct vert* a, struct vert* b,
+static void carvePath(struct map map, struct vert* a, struct vert* b, int size,
     void(*hollowFunc)(struct map, int, int, int, int, int))
 {
-    int size = 2 + (rand() & 1) * 2;
-
     int x0 = MIN(a->x, b->x) - size / 2;
     int y0 = MIN(a->y, b->y) - size / 2;
     int x1 = MAX(a->x, b->x) + size / 2;
     int y1 = MAX(a->y, b->y) + size / 2;
+
+    x0 = MAX(0, x0); y0 = MAX(0, y0);
+    x1 = MIN(map.width, x1); y1 = MIN(map.height, y1);
 
     hollowFunc(map, x0, y0, x1 - x0, y1 - y0, ADJ(b, getDir(b, a)) == NULL ? getDir(a, b) : DIR_NONE);
 }
@@ -382,7 +384,7 @@ static void carveNetwork(struct map map, struct vert* v,
     for (int i = 0; i < 4; ++i) {
         struct vert* next = ADJ(v, i);
         if (next != NULL && (next->mark != CARVE_MARK || ADJ(next, getDir(next, v)) != v)) {
-            carvePath(map, v, next, hollowFunc);
+            carvePath(map, v, next, 2 + (rand() & 1) * 2, hollowFunc);
         }
     }
 
@@ -405,16 +407,107 @@ static void freeVerts(struct vert* v)
     vertCount = 0;
 }
 
-void map_genDungeon(struct map map, int x, int y, int w, int h,
+static int insertVert(struct vert* v, struct vert* new)
+{
+    struct vert* next;
+
+    v->mark = 1;
+
+    int dir = getDir(v, new);
+
+    if (dir != DIR_NONE && ADJ(v, dir) != NULL && getDir(new, ADJ(v, dir)) == dir) {
+        next = ADJ(v, dir);
+
+        joinVerts(new, v);
+        joinVerts(new, next);
+
+        return TRUE;
+    }
+
+    for (int i = 0; i < 4; ++i) {
+        next = ADJ(v, i);
+        if (next != NULL && next->mark != 1 && insertVert(next, new)) return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void addConnectorVerts(struct vert* v,
+    int x, int y, int w, int h,
+    int connc, struct connector* connv)
+{
+    floodNetwork(v, 0);
+
+    for (int i = 0; i < connc; ++i) {
+        struct connector conn = connv[i];
+
+        if (conn.type != CONN_OPEN) continue;
+
+        switch (conn.dir) {
+        case DIR_T:
+            insertVert(v, vert_new(conn.x, y + MARGIN)); break;
+        case DIR_L:
+            insertVert(v, vert_new(x + MARGIN, conn.y)); break;
+        case DIR_B:
+            insertVert(v, vert_new(conn.x, y + h - MARGIN)); break;
+        case DIR_R:
+            insertVert(v, vert_new(x + w - MARGIN, conn.y)); break;
+        }
+
+        floodNetwork(v, 0);
+    }
+}
+
+static void carveConnectors(struct map map,
+    int x, int y, int w, int h,
+    int connc, struct connector* connv,
+    void(*hollowFunc)(struct map, int, int, int, int, int))
+{
+    for (int i = 0; i < connc; ++i) {
+        struct connector conn = connv[i];
+
+        if (conn.type != CONN_OPEN) continue;
+
+        struct vert a = { .paths = { NULL, NULL, NULL, NULL } };
+        struct vert b = { .paths = { NULL, NULL, NULL, NULL } };
+
+        switch (conn.dir) {
+        case DIR_T:
+            a.x = conn.x; a.y = y + MARGIN;
+            b.x = conn.x; b.y = y;
+            break;
+        case DIR_L:
+            a.x = x + MARGIN; a.y = conn.y;
+            b.x = x, b.y = conn.y;
+            break;
+        case DIR_B:
+            a.x = conn.x; a.y = y + h - MARGIN;
+            b.x = conn.x; b.y = y + h;
+            break;
+        case DIR_R:
+            a.x = x + w - MARGIN; a.y = conn.y;
+            b.x = x + w; b.y = conn.y;
+            break;
+        }
+
+        joinVerts(&a, &b);
+        carvePath(map, &a, &b, conn.size, hollowFunc);
+    }
+}
+
+void map_genDungeon(struct map map,
+    int x, int y, int w, int h,
     int connc, struct connector* connv,
     void(*hollowFunc)(struct map, int, int, int, int, int),
     void(*solidFunc)(struct map, int, int, int, int))
 {
-    struct vert* tl = quad(x + 8, y + 8, w - 16, h - 16);
+    struct vert* tl = quad(x + MARGIN, y + MARGIN, w - MARGIN * 2, h - MARGIN * 2);
 
+    addConnectorVerts(tl, x, y, w, h, connc, connv);
     subdivide(tl);
     cullPaths(tl);
     carveNetwork(map, tl, hollowFunc);
+    carveConnectors(map, x, y, w, h, connc, connv, hollowFunc);
     solidFunc(map, x, y, w, h);
 
     freeVerts(tl);
