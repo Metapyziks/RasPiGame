@@ -362,18 +362,18 @@ static void cullPaths(struct vert* v)
     free(paths);
 }
 
-static void carvePath(struct map map, struct vert* a, struct vert* b, int size,
-    void(*hollowFunc)(struct map, int, int, int, int, int))
+static void carvePath(struct map map, struct vert* a, struct vert* b, int size, int flags,
+    void(*hollowFunc)(struct map, int, int, int, int, int, int))
 {
-    int x0 = MIN(a->x, b->x) - size / 2;
-    int y0 = MIN(a->y, b->y) - size / 2;
-    int x1 = MAX(a->x, b->x) + size / 2;
-    int y1 = MAX(a->y, b->y) + size / 2;
+    int x0 = MIN(a->x, b->x) - CEIL(size, 2);
+    int y0 = MIN(a->y, b->y) - CEIL(size, 2);
+    int x1 = MAX(a->x, b->x) + FLOOR(size, 2);
+    int y1 = MAX(a->y, b->y) + FLOOR(size, 2);
 
     x0 = MAX(0, x0); y0 = MAX(0, y0);
     x1 = MIN(map.width, x1); y1 = MIN(map.height, y1);
 
-    hollowFunc(map, x0, y0, x1 - x0, y1 - y0, ADJ(b, getDir(b, a)) == NULL ? getDir(a, b) : DIR_NONE);
+    hollowFunc(map, x0, y0, x1 - x0, y1 - y0, ADJ(b, getDir(b, a)) == NULL ? getDir(a, b) : DIR_NONE, flags);
 }
 
 static void carveNetwork(struct map map, struct vert* v,
@@ -384,7 +384,7 @@ static void carveNetwork(struct map map, struct vert* v,
     for (int i = 0; i < 4; ++i) {
         struct vert* next = ADJ(v, i);
         if (next != NULL && (next->mark != CARVE_MARK || ADJ(next, getDir(next, v)) != v)) {
-            carvePath(map, v, next, 2 + (rand() & 1) * 2, hollowFunc);
+            carvePath(map, v, next, 2 + (rand() & 1) * 2, PATH_DEFAULT, hollowFunc);
         }
     }
 
@@ -461,7 +461,7 @@ static void addConnectorVerts(struct vert* v,
 static void carveConnectors(struct map map,
     int x, int y, int w, int h,
     int connc, struct connector* connv,
-    void(*hollowFunc)(struct map, int, int, int, int, int))
+    void(*hollowFunc)(struct map, int, int, int, int, int, int))
 {
     for (int i = 0; i < connc; ++i) {
         struct connector conn = connv[i];
@@ -491,14 +491,14 @@ static void carveConnectors(struct map map,
         }
 
         joinVerts(&a, &b);
-        carvePath(map, &a, &b, conn.size, hollowFunc);
+        carvePath(map, &a, &b, conn.size, PATH_CONN, hollowFunc);
     }
 }
 
 void map_genDungeon(struct map map,
     int x, int y, int w, int h,
     int connc, struct connector* connv,
-    void(*hollowFunc)(struct map, int, int, int, int, int),
+    void(*hollowFunc)(struct map, int, int, int, int, int, int),
     void(*solidFunc)(struct map, int, int, int, int))
 {
     struct vert* tl = quad(x + MARGIN, y + MARGIN, w - MARGIN * 2, h - MARGIN * 2);

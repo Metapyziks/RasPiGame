@@ -44,7 +44,7 @@ void map_clearTile(struct map map, int x, int y)
 {
 	map.tiles[x + y * map.width].back = DEFAULT_TILE;
 	map.tiles[x + y * map.width].fore = DEFAULT_TILE;
-	map.tiles[x + y * map.width].flags = TFLAG_NONE;
+    map.tiles[x + y * map.width].flags = TILE_NONE;
 }
 
 void map_setTileBackground(struct map map, int x, int y, uint16_t id)

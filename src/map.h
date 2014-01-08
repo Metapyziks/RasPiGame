@@ -5,14 +5,17 @@
 
 #define DEFAULT_TILE 0xffff
 
-#define TFLAG_NONE 0x00
-#define TFLAG_SOLID 0x01
+#define TILE_NONE 0
+#define TILE_SOLID 1
 
 #define DIR_NONE -1
 #define DIR_T 0
 #define DIR_L 1
 #define DIR_B 2
 #define DIR_R 3
+
+#define PATH_DEFAULT 0
+#define PATH_CONN 1
 
 #define CONN_OPEN 0
 #define CONN_DOOR 1
@@ -58,7 +61,7 @@ void map_genForest(struct map map, int x, int y, int width, int height,
 
 void map_genDungeon(struct map map, int x, int y, int width, int height,
     int connc, struct connector* connv,
-    void(*hollowFunc)(struct map, int, int, int, int, int),
+    void(*hollowFunc)(struct map, int, int, int, int, int, int),
     void(*solidFunc)(struct map, int, int, int, int));
 
 #endif

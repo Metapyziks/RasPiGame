@@ -25,8 +25,8 @@ static void generateMap(void)
 
     struct connector conns[2];
 
-    conns[0] = conn_open(DIR_T, 16 + (rand() % (MAP_WIDTH - 32)), 2);
-    conns[1] = conn_open(DIR_B, 16 + (rand() % (MAP_WIDTH - 32)), 2);
+    conns[0] = conn_open(DIR_T, 16 + (rand() % (MAP_WIDTH - 32)), 3);
+    conns[1] = conn_open(DIR_B, 16 + (rand() % (MAP_WIDTH - 32)), 3);
 
     curMap = map_new(MAP_WIDTH, MAP_HEIGHT);
     map_genForest(curMap, 0, 0, MAP_WIDTH, MAP_HEIGHT, 2, conns);

@@ -6,13 +6,13 @@
 static void placeTree(struct map map, int x, int y)
 {
     map_setTileBackground(map, x, y, 0x0088);
-    map_setTileFlags(map, x, y, TFLAG_SOLID);
+    map_setTileFlags(map, x, y, TILE_SOLID);
 }
 
 static void placeStump(struct map map, int x, int y)
 {
     map_setTileBackground(map, x, y, 0x0089);
-    map_setTileFlags(map, x, y, TFLAG_SOLID);
+    map_setTileFlags(map, x, y, TILE_SOLID);
 }
 
 static void placeBigTree(struct map map, int x, int y)
@@ -22,19 +22,19 @@ static void placeBigTree(struct map map, int x, int y)
     map_setTileBackground(map, x + 0, y + 1, 0x00ff);
     map_setTileBackground(map, x + 1, y + 1, 0x0100);
 
-    map_setTileFlags(map, x + 0, y + 0, TFLAG_SOLID);
-    map_setTileFlags(map, x + 1, y + 0, TFLAG_SOLID);
-    map_setTileFlags(map, x + 0, y + 1, TFLAG_SOLID);
-    map_setTileFlags(map, x + 1, y + 1, TFLAG_SOLID);
+    map_setTileFlags(map, x + 0, y + 0, TILE_SOLID);
+    map_setTileFlags(map, x + 1, y + 0, TILE_SOLID);
+    map_setTileFlags(map, x + 0, y + 1, TILE_SOLID);
+    map_setTileFlags(map, x + 1, y + 1, TILE_SOLID);
 }
 
-static void placeGrass(struct map map, int x, int y, int width, int height, int dir)
+static void placeGrass(struct map map, int x, int y, int width, int height, int dir, int flags)
 {
-    int grass = rand() & 3;
+    int grass = !(flags & PATH_CONN) && (rand() & 3);
 
     for (int r = MAX(0, y - 1); r < MIN(map.height, y + height + 1); ++r)
     for (int c = MAX(0, x - 1); c < MIN(map.width, x + width + 1); ++c) {
-        if (map_getTileFlags(map, c, r) != TFLAG_NONE) continue;
+        if (map_getTileFlags(map, c, r) != TILE_NONE) continue;
 
         int isHedge = ((dir == DIR_L || dir == DIR_R) && c == x + width / 2)
             || (dir == DIR_B && r == y + height / 2);
@@ -45,7 +45,7 @@ static void placeGrass(struct map map, int x, int y, int width, int height, int 
             if ((rand() & 0x3) < 0x3) continue;
         }
 
-        map_setTileFlags(map, c, r, TFLAG_NONE);
+        map_setTileFlags(map, c, r, TILE_NONE);
 
         if ((rand() & 0xff) < 0x7) {
             map_setTileForeground(map, c, r, 0x00ec);
