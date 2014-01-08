@@ -130,8 +130,14 @@ static void placeTrees(struct map map, int x, int y, int width, int height)
     }
 }
 
-void map_genForest(struct map map, int x, int y, int width, int height,
+void map_genForest(struct map map, int x, int y, int w, int h,
     int connc, struct connector* connv)
 {
-    map_genDungeon(map, x, y, width, height, connc, connv, placeGrass, placeTrees);
+    struct vert* v = map_genPaths(map, x, y, w, h, connc, connv);
+
+    map_carveNetwork(map, v, placeGrass);
+    map_carveConnectors(map, x, y, w, h, connc, connv, placeGrass);
+    map_freeVerts(v);
+    
+    placeTrees(map, x, y, w, h);
 }

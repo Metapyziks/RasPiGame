@@ -5,8 +5,8 @@
 #include "sprite.h"
 #include "map.h"
 
-#define MAP_WIDTH 96
-#define MAP_HEIGHT 64
+#define MAP_WIDTH 48
+#define MAP_HEIGHT 96
 
 static int cameraX = MAP_WIDTH / 2 * 16;
 static int cameraY = MAP_HEIGHT / 2 * 16;

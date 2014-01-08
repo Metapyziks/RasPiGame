@@ -18,7 +18,7 @@ SRC = \
 	$(SRCDIR)/sprite.c \
 	$(SRCDIR)/map.c \
 	$(SRCDIR)/mapgen/forest.c \
-	$(SRCDIR)/mapgen/dungeon.c
+	$(SRCDIR)/mapgen/paths.c
 
 AUX = \
 	$(SRCDIR)/lcd.c

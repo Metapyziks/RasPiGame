@@ -34,6 +34,12 @@ struct map {
     struct tile* tiles;
 };
 
+struct vert
+{
+    int x, y, mark, id;
+    struct vert* paths[4];
+};
+
 struct connector {
     int x, y;
     int type, dir, size;
@@ -56,12 +62,23 @@ uint8_t map_getTileFlags(struct map map, int x, int y);
 int map_hasTileBackground(struct map map, int x, int y);
 int map_hasTileForeground(struct map map, int x, int y);
 
-void map_genForest(struct map map, int x, int y, int width, int height,
+struct vert* map_genPaths(struct map map, int x, int y, int width, int height,
     int connc, struct connector* connv);
 
-void map_genDungeon(struct map map, int x, int y, int width, int height,
+void map_freeVerts(struct vert* v);
+
+void map_carvePath(struct map map, struct vert* a, struct vert* b, int size, int flags,
+    void(*hollowFunc)(struct map, int, int, int, int, int, int));
+
+void map_carveNetwork(struct map map, struct vert* v,
+    void(*hollowFunc)(struct map, int, int, int, int, int));
+
+void map_carveConnectors(struct map map,
+    int x, int y, int w, int h,
     int connc, struct connector* connv,
-    void(*hollowFunc)(struct map, int, int, int, int, int, int),
-    void(*solidFunc)(struct map, int, int, int, int));
+    void(*hollowFunc)(struct map, int, int, int, int, int, int));
+
+void map_genForest(struct map map, int x, int y, int width, int height,
+    int connc, struct connector* connv);
 
 #endif

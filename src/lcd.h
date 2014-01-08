@@ -10,8 +10,8 @@
 #define DISPLAY_WIDTH 320
 #define DISPLAY_HEIGHT 240
 #else
-#define DISPLAY_WIDTH 1472
-#define DISPLAY_HEIGHT 960
+#define DISPLAY_WIDTH 640
+#define DISPLAY_HEIGHT 480
 #endif
 
 #define CLR_FROM_RGB(r, g, b) ((color_t) ((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | (((b) & 0xF8) >> 3)))
