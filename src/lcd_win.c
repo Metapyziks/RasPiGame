@@ -34,6 +34,8 @@ static void onKeyDownFunc(uint8_t key, int x, int y)
             pressedButtons |= BTN_2; break;
         case 's':
             pressedButtons |= BTN_1; break;
+        case ' ':
+            pressedButtons |= BTN_0; break;
     }
 }
 
@@ -48,6 +50,8 @@ static void onKeyUpFunc(uint8_t key, int x, int y)
             pressedButtons &= ~BTN_2; break;
         case 's':
             pressedButtons &= ~BTN_1; break;
+        case ' ':
+            pressedButtons &= ~BTN_0; break;
     }
 }
 

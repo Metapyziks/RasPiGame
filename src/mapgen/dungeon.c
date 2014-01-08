@@ -330,7 +330,7 @@ static void cullPaths(struct vert* v)
 
     int pathCount = countPaths(paths);
     int currCount = pathCount;
-    int destCount = 0;
+    int destCount = pathCount / 2;
 
     while (pathCount > destCount && currCount > 0) {
         int index = rand() % currCount;
@@ -406,6 +406,7 @@ static void freeVerts(struct vert* v)
 }
 
 void map_genDungeon(struct map map, int x, int y, int w, int h,
+    int connc, struct connector* connv,
     void(*hollowFunc)(struct map, int, int, int, int, int),
     void(*solidFunc)(struct map, int, int, int, int))
 {

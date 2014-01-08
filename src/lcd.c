@@ -90,17 +90,18 @@ void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
     maxI = CEIL(maxI, tileW);
     maxJ = CEIL(maxJ, tileH);
 
-    for (int j = minJ; j < maxJ; ++j) {
-        int ty = WRAP(j, map.height);
-        int oy = ((j * tileH) - srcY) * scaleY;
+    minI = MAX(minI, 0); maxI = MIN(maxI, map.width);
+    minJ = MAX(minJ, 0); maxJ = MIN(maxJ, map.height);    
+
+    for (int ty = minJ; ty < maxJ; ++ty) {
+        int oy = ((ty * tileH) - srcY) * scaleY;
         int py = dstH - (oy + tileH * scaleY);
 
         int minY = MAX(0, -oy);
         int maxY = tileH * scaleY + MIN(0, py);
 
-        for (int i = minI; i < maxI; ++i) {
-            int tx = WRAP(i, map.width);
-            int ox = ((i * tileW) - srcX) * scaleX;
+        for (int tx = minI; tx < maxI; ++tx) {
+            int ox = ((tx * tileW) - srcX) * scaleX;
             int px = dstW - (ox + tileW * scaleX);
 
             int minX = MAX(0, -ox);

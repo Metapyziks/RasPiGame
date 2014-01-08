@@ -3,6 +3,43 @@
 #include "map.h"
 #include "utils.h"
 
+struct connector conn_open(int dir, int offset, int size)
+{
+    struct connector conn = {
+        .type = CONN_OPEN,
+        .dir = dir,
+        .size = size,
+        .x = (dir == DIR_T || dir == DIR_B) ? offset : 0,
+        .y = (dir == DIR_L || dir == DIR_R) ? offset : 0
+    };
+
+    return conn;
+}
+
+struct connector conn_door(int x, int y, int dir, int size)
+{
+    struct connector conn = {
+        .type = CONN_DOOR,
+        .dir = dir,
+        .size = size,
+        .x = x,
+        .y = y
+    };
+
+    return conn;
+}
+
+struct connector conn_vert(int x, int y, int up)
+{
+    struct connector conn = {
+        .type = up ? CONN_VERT_UP : CONN_VERT_UP,
+        .x = x,
+        .y = y
+    };
+
+    return conn;
+}
+
 void map_clearTile(struct map map, int x, int y)
 {
 	map.tiles[x + y * map.width].back = DEFAULT_TILE;

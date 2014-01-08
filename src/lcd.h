@@ -6,8 +6,13 @@
 #include "utils.h"
 #include "map.h"
 
+#ifdef RPI
 #define DISPLAY_WIDTH 320
 #define DISPLAY_HEIGHT 240
+#else
+#define DISPLAY_WIDTH 1472
+#define DISPLAY_HEIGHT 960
+#endif
 
 #define CLR_FROM_RGB(r, g, b) ((color_t) ((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | (((b) & 0xF8) >> 3)))
 
@@ -23,8 +28,8 @@
 typedef uint16_t color_t;
 typedef uint8_t button_t;
 
-void lcd_idleFunc(void (*idleFunc)(void));
-void lcd_displayFunc(void (*displayFunc)(void));
+void lcd_idleFunc(void(*idleFunc)(void));
+void lcd_displayFunc(void(*displayFunc)(void));
 
 int lcd_init(void);
 void lcd_mainLoop(void);
@@ -55,12 +60,12 @@ void lcd_blitSpritePaletteScaled(uint8_t* sprite, color_t* palette,
     int scaleX, int scaleY);
 
 void lcd_blitTilesPalette(uint8_t* tilemap, color_t* palette,
-    struct map map, int tileW, int tileH,
+struct map map, int tileW, int tileH,
     int srcX, int srcY, int dstX, int dstY,
     int dstW, int dstH);
 
 void lcd_blitTilesPaletteScaled(uint8_t* tilemap, color_t* palette,
-    struct map map, int tileW, int tileH,
+struct map map, int tileW, int tileH,
     int srcX, int srcY, int dstX, int dstY,
     int dstW, int dstH, int scaleX, int scaleY);
 
