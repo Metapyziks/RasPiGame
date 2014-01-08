@@ -407,8 +407,10 @@ static void addConnectorVerts(struct vert* v,
     }
 }
 
-void map_carvePath(struct map map, struct vert* a, struct vert* b, int size, int flags,
-    void(*hollowFunc)(struct map, int, int, int, int, int, int))
+void map_carvePath(struct map map,
+    struct vert* a, struct vert* b,
+    int size, int flags,
+    carveFunc_t carveFunc)
 {
     int x0 = MIN(a->x, b->x) - CEIL(size, 2);
     int y0 = MIN(a->y, b->y) - CEIL(size, 2);
@@ -418,25 +420,26 @@ void map_carvePath(struct map map, struct vert* a, struct vert* b, int size, int
     x0 = MAX(0, x0); y0 = MAX(0, y0);
     x1 = MIN(map.width, x1); y1 = MIN(map.height, y1);
 
-    hollowFunc(map, x0, y0, x1 - x0, y1 - y0, ADJ(b, getDir(b, a)) == NULL ? getDir(a, b) : DIR_NONE, flags);
+    carveFunc(map, x0, y0, x1 - x0, y1 - y0, ADJ(b, getDir(b, a)) == NULL ? getDir(a, b) : DIR_NONE, flags);
 }
 
-void map_carveNetwork(struct map map, struct vert* v,
-    void(*hollowFunc)(struct map, int, int, int, int, int))
+void map_carveNetwork(struct map map,
+    struct vert* v,
+    carveFunc_t carveFunc)
 {
     v->mark = CARVE_MARK;
 
     for (int i = 0; i < 4; ++i) {
         struct vert* next = ADJ(v, i);
         if (next != NULL && (next->mark != CARVE_MARK || ADJ(next, getDir(next, v)) != v)) {
-            map_carvePath(map, v, next, 2 + (rand() & 1) * 2, PATH_DEFAULT, hollowFunc);
+            map_carvePath(map, v, next, 2 + (rand() & 1) * 2, PATH_DEFAULT, carveFunc);
         }
     }
 
     for (int i = 0; i < 4; ++i) {
         struct vert* next = ADJ(v, i);
         if (next != NULL && next->mark != CARVE_MARK) {
-            map_carveNetwork(map, next, hollowFunc);
+            map_carveNetwork(map, next, carveFunc);
         }
     }
 }
@@ -444,7 +447,7 @@ void map_carveNetwork(struct map map, struct vert* v,
 void map_carveConnectors(struct map map,
     int x, int y, int w, int h,
     int connc, struct connector* connv,
-    void(*hollowFunc)(struct map, int, int, int, int, int, int))
+    carveFunc_t carveFunc)
 {
     for (int i = 0; i < connc; ++i) {
         struct connector conn = connv[i];
@@ -474,7 +477,7 @@ void map_carveConnectors(struct map map,
         }
 
         joinVerts(&a, &b);
-        map_carvePath(map, &a, &b, conn.size, PATH_CONN, hollowFunc);
+        map_carvePath(map, &a, &b, conn.size, PATH_CONN, carveFunc);
     }
 }
 

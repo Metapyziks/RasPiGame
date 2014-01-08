@@ -28,19 +28,19 @@ static void placeBigTree(struct map map, int x, int y)
     map_setTileFlags(map, x + 1, y + 1, TILE_SOLID);
 }
 
-static void placeGrass(struct map map, int x, int y, int width, int height, int dir, int flags)
+void map_genForestCarve(struct map map, int x, int y, int w, int h, int dir, int flags)
 {
     int grass = !(flags & PATH_CONN) && (rand() & 3);
 
-    for (int r = MAX(0, y - 1); r < MIN(map.height, y + height + 1); ++r)
-    for (int c = MAX(0, x - 1); c < MIN(map.width, x + width + 1); ++c) {
+    for (int r = MAX(0, y - 1); r < MIN(map.height, y + h + 1); ++r)
+    for (int c = MAX(0, x - 1); c < MIN(map.width, x + w + 1); ++c) {
         if (map_getTileFlags(map, c, r) != TILE_NONE) continue;
 
-        int isHedge = ((dir == DIR_L || dir == DIR_R) && c == x + width / 2)
-            || (dir == DIR_B && r == y + height / 2);
+        int isHedge = ((dir == DIR_L || dir == DIR_R) && c == x + w / 2)
+            || (dir == DIR_B && r == y + h / 2);
 
-        if (r == y - 1 || c == x - 1 || r == y + height || c == x + width) {
-            if ((r == y - 1 || r == y + height) == (c == x - 1 || c == x + width)) continue;
+        if (r == y - 1 || c == x - 1 || r == y + h || c == x + w) {
+            if ((r == y - 1 || r == y + h) == (c == x - 1 || c == x + w)) continue;
             if (isHedge) { placeTree(map, c, r); continue; }
             if ((rand() & 0x3) < 0x3) continue;
         }
@@ -78,10 +78,21 @@ static void placeGrass(struct map map, int x, int y, int width, int height, int 
     }
 }
 
-static void placeTrees(struct map map, int x, int y, int width, int height)
+void map_genForestNonSolid(struct map map,
+    int x, int y, int w, int h,
+    int connc, struct connector* connv)
 {
-    for (int r = y; r < y + height - 1; ++r)
-    for (int c = x; c < x + width - 1; ++c) {
+    struct vert* v = map_genPaths(map, x, y, w, h, connc, connv);
+
+    map_carveNetwork(map, v, map_genForestCarve);
+    map_carveConnectors(map, x, y, w, h, connc, connv, map_genForestCarve);
+    map_freeVerts(v);
+}
+
+void map_genForestSolid(struct map map, int x, int y, int w, int h)
+{
+    for (int r = y; r < y + h - 1; ++r)
+    for (int c = x; c < x + w - 1; ++c) {
         if (map_hasTileBackground(map, c + 0, r + 0) ||
             map_hasTileBackground(map, c + 1, r + 0) ||
             map_hasTileBackground(map, c + 1, r + 1) ||
@@ -91,15 +102,15 @@ static void placeTrees(struct map map, int x, int y, int width, int height)
 
         int i = 1;
 
-        int down = r < y + height - 2 &&
+        int down = r < y + h - 2 &&
             !map_hasTileBackground(map, c + 0, r + 2) &&
             !map_hasTileBackground(map, c + 1, r + 2) ? i++ : 0;
 
-        int right = c < x + width - 2 &&
+        int right = c < x + w - 2 &&
             !map_hasTileBackground(map, c + 2, r + 0) &&
             !map_hasTileBackground(map, c + 2, r + 1) ? i++ : 0;
 
-        int downRight = r < y + height - 2 && c < x + width - 2 &&
+        int downRight = r < y + h - 2 && c < x + w - 2 &&
             !map_hasTileBackground(map, c + 1, r + 1) &&
             !map_hasTileBackground(map, c + 2, r + 1) &&
             !map_hasTileBackground(map, c + 2, r + 2) &&
@@ -118,8 +129,8 @@ static void placeTrees(struct map map, int x, int y, int width, int height)
         }
     }
 
-    for (int r = y; r < y + height; ++r)
-    for (int c = x; c < x + width; ++c) {
+    for (int r = y; r < y + h; ++r)
+    for (int c = x; c < x + w; ++c) {
         if (!map_hasTileBackground(map, c, r)) {
             if ((rand() & 0xff) < 0xe7) {
                 placeTree(map, c, r);
@@ -128,16 +139,4 @@ static void placeTrees(struct map map, int x, int y, int width, int height)
             }
         }
     }
-}
-
-void map_genForest(struct map map, int x, int y, int w, int h,
-    int connc, struct connector* connv)
-{
-    struct vert* v = map_genPaths(map, x, y, w, h, connc, connv);
-
-    map_carveNetwork(map, v, placeGrass);
-    map_carveConnectors(map, x, y, w, h, connc, connv, placeGrass);
-    map_freeVerts(v);
-    
-    placeTrees(map, x, y, w, h);
 }

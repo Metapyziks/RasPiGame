@@ -29,7 +29,10 @@ static void generateMap(void)
     conns[1] = conn_open(DIR_B, 16 + (rand() % (MAP_WIDTH - 32)), 3);
 
     curMap = map_new(MAP_WIDTH, MAP_HEIGHT);
-    map_genForest(curMap, 0, 0, MAP_WIDTH, MAP_HEIGHT, 2, conns);
+    map_generateExterior(curMap, 0, 0, MAP_WIDTH, MAP_HEIGHT, 2, conns,
+        map_genForestNonSolid, map_genForestSolid,
+        map_genForestSolid, map_genVoidSolid,
+        map_genForestSolid, map_genVoidSolid);
 }
 
 static void idleFunc(void)

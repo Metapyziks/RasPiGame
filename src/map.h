@@ -22,6 +22,17 @@
 #define CONN_VERT_UP 2
 #define CONN_VERT_DN 3
 
+typedef void(*carveFunc_t)(struct map map,
+    int x, int y, int w, int h,
+    int dir, int flags);
+
+typedef void(*nonSolidFunc_t)(struct map map,
+    int x, int y, int w, int h,
+    int connc, struct connector* connv);
+
+typedef void(*solidFunc_t)(struct map map,
+    int x, int y, int w, int h);
+
 struct tile {
     uint16_t back;
     uint16_t fore;
@@ -67,18 +78,39 @@ struct vert* map_genPaths(struct map map, int x, int y, int width, int height,
 
 void map_freeVerts(struct vert* v);
 
-void map_carvePath(struct map map, struct vert* a, struct vert* b, int size, int flags,
-    void(*hollowFunc)(struct map, int, int, int, int, int, int));
+void map_carvePath(struct map map,
+    struct vert* a, struct vert* b,
+    int size, int flags,
+    carveFunc_t carveFunc);
 
-void map_carveNetwork(struct map map, struct vert* v,
-    void(*hollowFunc)(struct map, int, int, int, int, int));
+void map_carveNetwork(struct map map,
+    struct vert* v,
+    carveFunc_t carveFunc);
 
 void map_carveConnectors(struct map map,
     int x, int y, int w, int h,
     int connc, struct connector* connv,
-    void(*hollowFunc)(struct map, int, int, int, int, int, int));
+    carveFunc_t carveFunc);
 
-void map_genForest(struct map map, int x, int y, int width, int height,
+void map_generateExterior(struct map map,
+    int x, int y, int w, int h,
+    int connc, struct connector* connv,
+    nonSolidFunc_t nonSolidFunc, solidFunc_t centreSolidFunc,
+    solidFunc_t topSolidFunc, solidFunc_t leftSolidFunc,
+    solidFunc_t bottomSolidFunc, solidFunc_t rightSolidFunc);
+
+void map_genVoidSolid(struct map map,
+    int x, int y, int w, int h);
+
+void map_genForestCarve(struct map map,
+    int x, int y, int w, int h,
+    int dir, int flags);
+
+void map_genForestNonSolid(struct map map,
+    int x, int y, int w, int h, 
     int connc, struct connector* connv);
+
+void map_genForestSolid(struct map map,
+    int x, int y, int w, int h);
 
 #endif
